@@ -3,8 +3,8 @@ export const strengths = [
   {
     glyph: '技',
     fig: 'tech',
-    title: 'How を知っているから、Why を深く問える',
-    titleEn: 'Technical depth that sharpens the Why',
+    title: 'How を知っているので、無理なく到達できる',
+    titleEn: 'Knowing the How, the Why becomes reachable',
     body:
       'エンジニアとして基盤刷新をリードし、公開APIを技術選定から海外チームと進めてきました。技術的なバックグラウンドがあるので、ロードマップの優先順位を根拠を持って決め、エンジニアと同じ言葉で議論できます。',
     bodyEn:
@@ -13,12 +13,12 @@ export const strengths = [
   {
     glyph: '数',
     fig: 'data',
-    title: 'データとAIを、事業の数字につなげる',
-    titleEn: 'Turning data and AI into business outcomes',
+    title: 'データを事業の数字に繋げる',
+    titleEn: 'Turning data into business numbers',
     body:
-      '生成AIによる顧客要望の自動分類、VoC の自動収集、MCP サーバーを使った PoC など、散らばった声を構造化して意思決定に使える形にしてきました。数字にして初めて、優先順位は議論できるものになります。',
+      'VoC の自動収集、生成AIによる顧客要望の自動分類など、社内ツールを改善し、散らばった声を構造化して意思決定に使える形にしてきました。定量的な数字にして初めて、優先順位は議論できるものになります。',
     bodyEn:
-      'From GenAI classification of customer requests to automated VoC collection and MCP prototypes, I structure scattered signals into something a decision can rest on. Priorities become debatable only once they are numbers.',
+      'From automated VoC collection to GenAI classification of customer requests, I have improved internal tools and structured scattered signals into something a decision can rest on. Priorities become debatable only once they are quantified.',
   },
   {
     glyph: '進',

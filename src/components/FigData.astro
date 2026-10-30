@@ -1,70 +1,148 @@
 ---
-/* 数: 散らばった顧客の声が、分類の一点を通って、右の4本の数になる。 */
-let seed = 20210311;
-const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+/* 数: 散らばった顧客の声（左）が、分類の一点（中央）を通って、右の 5 本の数になる。
+   声は JS で絶えず湧き、分類を通って項目に吸い込まれ、件数が増え続ける。 */
 const cats = [
-  { id: 'c0', label: '外部連携', en: 'integrations', n: 12, cap: '外部連携への要望。ばらばらの言い回しが、ここで一本の数になる。' },
-  { id: 'c1', label: '通話品質', en: 'call quality', n: 9,  cap: '通話品質の声。再現条件と環境が揃うほど、優先度の議論が速くなる。' },
-  { id: 'c2', label: 'API',    en: 'public api',    n: 8,  cap: 'API への要望。誰が、何を、どの頻度で叩きたいか。仕様はここから。' },
-  { id: 'c3', label: '画面',   en: 'ui',            n: 7,  cap: '画面の使い勝手。件数は少なくても、解約理由に出てくるものは別枠で見る。' },
+  { id: 'c0', label: 'MiiTel Phone', n0: 1284, w: 0.34, cap: '通話まわりの声。アポ・成約を増やしたい、ノンコア業務を自動化したい。' },
+  { id: 'c1', label: 'MiiTel Analytics', n0: 862, w: 0.22, cap: '分析の声。勝ちパターンを作りたい、有効な営業スキルを定量で見たい。' },
+  { id: 'c2', label: 'MiiTel API（β）', n0: 317, w: 0.12, cap: 'API の声。自社でデータ活用したい。誰が、何を、どの頻度で叩くのか。' },
+  { id: 'c3', label: 'CRM 連携', n0: 541, w: 0.18, cap: 'Salesforce / HubSpot / kintone に履歴を残したい、という声。' },
+  { id: 'c4', label: '外部連携', n0: 409, w: 0.14, cap: '外部アプリケーションとデータを紐付けたい。Webhook の要望はここに集まる。' },
 ];
 const hub = { x: 262, y: 150 };
-const dots: { x: number; y: number; r: number; c: string; path: string; delay: string }[] = [];
-cats.forEach((c) => {
-  for (let i = 0; i < c.n; i++) {
-    const x = 22 + rnd() * 150, y = 28 + rnd() * 244, r = 1.8 + rnd() * 2.2;
-    dots.push({ x, y, r, c: c.id, path: `M${x.toFixed(1)},${y.toFixed(1)} Q${(x + (hub.x - x) * 0.6).toFixed(1)},${y.toFixed(1)} ${hub.x - 20},${hub.y}`, delay: `${(rnd() * -6).toFixed(2)}s` });
-  }
-});
-const rows = [66, 114, 162, 210];
-const allLinks = cats.map((c) => `${c.id} e-${c.id} b-${c.id}`).join(' ') + ' hub';
+const rows = [52, 100, 148, 196, 244];
+const allLinks = cats.map((c) => `${c.id} b-${c.id}`).join(' ') + ' hub';
 ---
-<figure class="ifig" data-ifig>
-  <svg viewBox="0 0 520 300" role="img" aria-label="散らばった顧客の声が分類されて4つの数になる図">
+<figure class="ifig" data-ifig id="figdata" data-hub={`${hub.x},${hub.y}`} data-rows={rows.join(',')} data-cats={JSON.stringify(cats.map((c) => ({ id: c.id, n0: c.n0, w: c.w })))}>
+  <svg viewBox="0 0 520 300" role="img" aria-label="散らばった顧客の声が分類されて5つの件数になり、増え続ける図">
     <text x="22" y="16" class="lbl">Voice of customer</text>
     <text x="330" y="16" class="lbl">Count</text>
 
-    <g class="flows">{dots.map((d) => <path class={`d edge`} data-id={`e-${d.c}`} d={d.path} />)}</g>
-    <g class="dots">{dots.map((d) => <circle class={`d dot`} data-id={d.c} cx={d.x} cy={d.y} r={d.r} style={`animation-delay:${d.delay}`} />)}</g>
+    <g class="flows" aria-hidden="true">
+      {cats.map((c, i) => (
+        <path class="d edge" data-id={`e-${c.id} ${c.id}`} d={`M${hub.x + 22} ${hub.y} C${hub.x + 60} ${hub.y} 300 ${rows[i] + 6} 330 ${rows[i] + 6}`} />
+      ))}
+    </g>
+    <g class="dots" id="figdata-dots" aria-hidden="true"></g>
 
-    {cats.map((c, i) => (
-      <path class="d edge" data-id={`e-${c.id}`} d={`M${hub.x + 20} ${hub.y} C${hub.x + 60} ${hub.y} ${300} ${rows[i] + 6} 330 ${rows[i] + 6}`} />
-    ))}
-
-    <g class="d hit" data-id="hub" data-links={allLinks} data-cap="ここで分類。生成AIが要望にラベルを付け、件数にする。数になって初めて、優先順位は議論できる。" role="button" aria-label="分類">
+    <g class="d hit" data-id="hub" data-links={allLinks} data-cap="ここで分類。生成AIが要望にラベルを付け、件数にする。定量的な数字になって初めて、優先順位は議論できる。" role="button" aria-label="分類">
       <circle class="node hub" cx={hub.x} cy={hub.y} r="22" />
-      <circle class="pulse" cx={hub.x} cy={hub.y} r="22" />
+      <circle class="pulse" id="figdata-pulse" cx={hub.x} cy={hub.y} r="22" />
       <text x={hub.x} y={hub.y + 4} text-anchor="middle" class="t sm">分類</text>
     </g>
 
     {cats.map((c, i) => (
       <g class="d hit" data-id={`b-${c.id}`} data-links={`${c.id} e-${c.id} hub`} data-cap={c.cap} role="button" aria-label={c.label}>
         <rect class="hitbox" x="326" y={rows[i] - 14} width="190" height="36" />
-        <text x="330" y={rows[i] - 2} class="t sm">{c.label}<tspan class="lbl" dx="8">{c.en}</tspan></text>
-        <rect class="bar" x="330" y={rows[i] + 2} width={c.n * 11} height="9" />
-        <text x={330 + c.n * 11 + 8} y={rows[i] + 10} class="num">{c.n}</text>
+        <text x="330" y={rows[i] - 2} class="t sm">{c.label}</text>
+        <rect class="bar" data-bar={c.id} x="330" y={rows[i] + 2} width={Math.round(c.w * 150)} height="9" />
+        <text data-num={c.id} x={330 + Math.round(c.w * 150) + 8} y={rows[i] + 10} class="num">{c.n0.toLocaleString('en-US')}</text>
       </g>
     ))}
-    <text x="330" y="262" class="lbl">※ 件数は例</text>
+    <text x="330" y="282" class="lbl">※ 件数はイメージ</text>
   </svg>
   <figcaption>
-    <span class="cap">散らばった声を分類して数える。右の項目に触れると、その声だけが残ります。</span>
-    <span class="hint en-text">Hover or tap a category to see which voices feed it. Counts are illustrative.</span>
+    <span class="cap">散らばった声を分類して数える。件数は増え続けます。右の項目に触れると、その声だけが残ります。</span>
   </figcaption>
 </figure>
 
 <style>
-  .dot { fill: var(--ink); fill-opacity: .6; transform-box: fill-box; transform-origin: center; animation: drift 5s ease-in-out infinite alternate; }
+  .dot { fill: var(--ink); fill-opacity: .55; }
   .dot.on { fill: var(--ai); fill-opacity: 1; }
-  @keyframes drift { from { transform: translate(0, 0) } to { transform: translate(3px, -4px) } }
-  .flows .edge { stroke-opacity: .12; stroke-width: .7; }
+  .dot.go { fill: var(--ai); fill-opacity: .9; }
+  .flows .edge { stroke-opacity: .18; stroke-width: .8; }
   .node.hub { fill: var(--paper); }
-  .pulse { fill: none; stroke: var(--ai); stroke-width: 1; opacity: 0; transform-box: fill-box; transform-origin: center; animation: pulse 3s ease-out infinite; }
-  @keyframes pulse { 0% { transform: scale(1); opacity: .7 } 100% { transform: scale(1.9); opacity: 0 } }
+  .pulse { fill: none; stroke: var(--ai); stroke-width: 1; opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .pulse.ping { animation: pulse .9s ease-out; }
+  @keyframes pulse { 0% { transform: scale(1); opacity: .8 } 100% { transform: scale(1.9); opacity: 0 } }
   .hitbox { fill: transparent; }
-  .bar { fill: var(--ink); fill-opacity: .18; }
+  .bar { fill: var(--ink); fill-opacity: .18; transition: width .5s cubic-bezier(.2,.7,.2,1); }
   .on .bar { fill: var(--ai); fill-opacity: 1; }
   .num { font-family: var(--mono); font-size: 11px; fill: var(--mute); font-variant-numeric: tabular-nums; }
   .on .num { fill: var(--ai); }
-  @media (prefers-reduced-motion: reduce) { .dot, .pulse { animation: none; } .pulse { display: none; } }
 </style>
+
+<script>
+  const fig = document.getElementById('figdata');
+  const layer = document.getElementById('figdata-dots');
+  const pulse = document.getElementById('figdata-pulse');
+  if (fig && layer && pulse) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const NS = 'http://www.w3.org/2000/svg';
+    const [hx, hy] = (fig.dataset.hub || '262,150').split(',').map(Number);
+    const rows = (fig.dataset.rows || '').split(',').map(Number);
+    const cats: { id: string; n0: number; w: number }[] = JSON.parse(fig.dataset.cats || '[]');
+    const counts = cats.map((c) => c.n0);
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    const fmt = (n: number) => n.toLocaleString('en-US');
+
+    // 件数と棒の更新。棒は最大件数に対する比率
+    const render = () => {
+      const max = Math.max(...counts);
+      cats.forEach((c, i) => {
+        const w = Math.max(6, Math.round((counts[i] / max) * 150));
+        const bar = fig.querySelector<SVGRectElement>(`[data-bar="${c.id}"]`);
+        const num = fig.querySelector<SVGTextElement>(`[data-num="${c.id}"]`);
+        if (bar) bar.setAttribute('width', String(w));
+        if (num) { num.setAttribute('x', String(330 + w + 8)); num.textContent = fmt(counts[i]); }
+      });
+    };
+
+    // 一粒の声: 左で漂う → 分類へ → 項目へ。項目に着いたら件数が増える
+    type Dot = { el: SVGCircleElement; cat: number; x0: number; y0: number; t: number; wait: number; phase: 0 | 1 | 2 };
+    const dots: Dot[] = [];
+    const pick = () => { const r = Math.random(); let a = 0; for (let i = 0; i < cats.length; i++) { a += cats[i].w; if (r < a) return i; } return cats.length - 1; };
+    const spawn = (wait = 1.5 + Math.random() * 4.5) => {
+      const el = document.createElementNS(NS, 'circle');
+      const cat = pick();
+      el.setAttribute('class', 'd dot'); el.setAttribute('data-id', cats[cat].id);
+      el.setAttribute('r', (1.8 + Math.random() * 2).toFixed(1));
+      const x0 = 22 + Math.random() * 150, y0 = 28 + Math.random() * 244;
+      el.setAttribute('cx', x0.toFixed(1)); el.setAttribute('cy', y0.toFixed(1));
+      // 項目をホバー中なら、その項目宛ての声だけ色を付ける
+      const on = fig.querySelector<HTMLElement>('.hit.on');
+      if (fig.classList.contains('hov')) { if (on && (on.dataset.links || '').split(/\s+/).includes(cats[cat].id)) el.classList.add('on'); }
+      layer.appendChild(el);
+      dots.push({ el, cat, x0, y0, t: 0, wait, phase: 0 });
+    };
+    if (reduce) { for (let i = 0; i < 36; i++) spawn(1e9); render(); }
+    else {
+      for (let i = 0; i < 34; i++) spawn();
+      let last = 0, spawnIn = 0.2, raf = 0, visible = false;
+      const tick = (ts: number) => {
+        const dt = last ? Math.min((ts - last) / 1000, 0.05) : 0; last = ts;
+        spawnIn -= dt; if (spawnIn <= 0 && dots.length < 90) { spawnIn = 0.1 + Math.random() * 0.2; spawn(); }
+        for (let i = dots.length - 1; i >= 0; i--) {
+          const d = dots[i];
+          if (d.phase === 0) {
+            d.wait -= dt;
+            // 漂い
+            d.el.setAttribute('cx', (d.x0 + Math.sin(ts / 900 + d.y0) * 2).toFixed(1));
+            d.el.setAttribute('cy', (d.y0 + Math.cos(ts / 1100 + d.x0) * 2).toFixed(1));
+            if (d.wait <= 0) { d.phase = 1; d.t = 0; d.el.classList.add('go'); }
+            continue;
+          }
+          d.t += dt;
+          if (d.phase === 1) {
+            const u = ease(Math.min(1, d.t / 0.9)), cx = d.x0 + (hx - 20 - d.x0) * 0.6;
+            // 二次ベジェ: 出発点 → 制御点（横に伸ばす）→ 分類の左縁
+            const x = (1 - u) * (1 - u) * d.x0 + 2 * (1 - u) * u * cx + u * u * (hx - 20);
+            const y = (1 - u) * (1 - u) * d.y0 + 2 * (1 - u) * u * d.y0 + u * u * hy;
+            d.el.setAttribute('cx', x.toFixed(1)); d.el.setAttribute('cy', y.toFixed(1));
+            if (u >= 1) { d.phase = 2; d.t = 0; pulse.classList.remove('ping'); void (pulse as unknown as HTMLElement).getBoundingClientRect(); pulse.classList.add('ping'); }
+          } else {
+            const u = ease(Math.min(1, d.t / 0.8)), ty = rows[d.cat] + 6;
+            const p0 = { x: hx + 22, y: hy }, p1 = { x: hx + 60, y: hy }, p2 = { x: 300, y: ty }, p3 = { x: 330, y: ty };
+            const k = 1 - u;
+            const x = k * k * k * p0.x + 3 * k * k * u * p1.x + 3 * k * u * u * p2.x + u * u * u * p3.x;
+            const y = k * k * k * p0.y + 3 * k * k * u * p1.y + 3 * k * u * u * p2.y + u * u * u * p3.y;
+            d.el.setAttribute('cx', x.toFixed(1)); d.el.setAttribute('cy', y.toFixed(1));
+            if (u >= 1) { d.el.remove(); dots.splice(i, 1); counts[d.cat] += 1 + (Math.random() < 0.25 ? Math.floor(Math.random() * 4) : 0); render(); }
+          }
+        }
+        if (visible) raf = requestAnimationFrame(tick); else { raf = 0; last = 0; }
+      };
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf) raf = requestAnimationFrame(tick); }, { rootMargin: '80px' }).observe(fig);
+      render();
+    }
+  }
+</script>
