@@ -214,7 +214,7 @@ export function createFig(o: FigOptions) {
       const done = w.crossed >= 0, wd = words[w.i % words.length];
       let [l1, l2] = done ? [wd[2], wd[3]] : [wd[0], wd[1]];
       const f1 = done || !dev ? `500 12px ${SANS}` : `11px ${MONO}`, f2 = `10px ${MONO}`;
-      const y = w.top ? 10 : H - 24;
+      const y = w.top ? 10 : H - 29;
       fx.font = f1;
       // 線の右側が狭い画面では、入りきらない行末を省略する
       if (!done) { const maxW = W - lineX - 14; while (fx.measureText(l1).width > maxW && l1.length > 6) l1 = l1.slice(0, -2) + '…'; }
