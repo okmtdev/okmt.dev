@@ -165,8 +165,8 @@ export function createFig(o: FigOptions) {
     const mid = H / 2, amp0 = H * 0.42, dev = flavor === 'dev';
     const words = dev ? devWords : pmWords;
     const bars = Math.max(48, Math.floor(W / (dev ? 4 : 7))), bw = W / bars;
-    // 「現在」の帯。広い画面では指定どおり（やや左）、狭い画面では中央に寄せる
-    const span = to - from, from_ = W < 560 ? 0.5 - span / 2 : from, to_ = W < 560 ? 0.5 + span / 2 : to;
+    // 「現在」の帯。広い画面では指定どおり（やや左）、狭い画面では左右を分ける線が画面の真ん中に来るようにする
+    const span = to - from, from_ = W < 560 ? 0.5 - span : from, to_ = W < 560 ? 0.5 : to;
     const lineX = to_ * W, fv = FLOW_V;
     if (dev) {
       fx.strokeStyle = c.rule; fx.lineWidth = 1; fx.setLineDash([2, 5]);
