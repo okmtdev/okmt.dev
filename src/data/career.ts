@@ -38,7 +38,7 @@ export const career: CareerEntry[] = [
   {
     version: 'v3.0.0',
     fig: { view: 'wave', flavor: 'pm' },
-    date: '2025.07',
+    date: '2025.07 —',
     org: '株式会社RevComm',
     orgEn: 'RevComm Inc.',
     title: 'プロダクトマネージャー',
@@ -55,7 +55,7 @@ export const career: CareerEntry[] = [
   {
     version: 'v2.0.0',
     fig: { view: 'wave', flavor: 'dev' },
-    date: '2023.08',
+    date: '2023.08 — 2025.06',
     org: '株式会社RevComm',
     orgEn: 'RevComm Inc.',
     title: 'バックエンドエンジニア / プロジェクトリーダー',
