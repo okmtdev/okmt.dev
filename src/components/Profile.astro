@@ -1,0 +1,150 @@
+---
+import SectionHead from './SectionHead.astro';
+import { profile } from '../data/profile';
+const rows = [
+  { k: '生年月日', ke: 'Born', v: profile.birthDateLabel, ve: profile.birthDate },
+  { k: '出身', ke: 'From', v: profile.birthPlace, ve: profile.birthPlaceEn },
+  { k: '居住地', ke: 'Lives in', v: profile.location, ve: profile.locationEn },
+  { k: '言語', ke: 'Languages', v: profile.languages, ve: profile.languagesEn },
+  { k: '価値観', ke: 'Values', v: profile.values, ve: profile.valuesEn },
+  { k: '資格', ke: 'Certifications', v: profile.certifications.join(' / ') + ' など', ve: profile.certificationsEn },
+];
+const dog = profile.dogPhotos[0];
+const me = profile.portrait;
+---
+<section class="section" aria-labelledby="profile">
+  <div class="container grid">
+    <div>
+      <SectionHead ja="基本情報" en="Profile" id="profile" />
+      <dl class="rows">
+        {rows.map((r) => (
+          <div class="row">
+            <dt><span>{r.k}</span><span class="label">{r.ke}</span></dt>
+            <dd>{r.v}<span class="en-text">{r.ve}</span></dd>
+          </div>
+        ))}
+        <div class="row">
+          <dt><span>特許</span><span class="label">Patents</span></dt>
+          <dd>
+            <ul class="patents">
+              {profile.patents.map((p) => (<li><span class="mono">{p.no}</span> {p.title}</li>))}
+            </ul>
+            <span class="en-text">いずれも共同発明 / Two granted Japanese patents on information processing, as co-inventor.</span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+    <div class="side">
+    {me && (
+      <figure class="me" id="me" tabindex="0" aria-label="学生時代の写真。触れるとビールが出ます">
+        <div class="card">
+          <img src={me.src} alt={me.alt} width="1600" height="1201" loading="lazy" />
+        </div>
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+          <symbol id="beer" viewBox="0 0 32 36">
+            <path class="foam" d="M5 11 C3 11 2 9 3 7 C3 4 6 3 8 4 C9 1 14 1 15 4 C17 2 22 2 22 6 C25 5 28 8 26 11 Z" />
+            <path class="glass" d="M6 11 H25 L23.5 33 H7.5 Z" />
+            <path class="handle" d="M25 15 H28.5 C31 15 31 27 28.5 27 H24" />
+            <path class="line" d="M11 15 V29 M15.5 15 V29" />
+          </symbol>
+        </svg>
+        <div class="beers" aria-hidden="true">
+          {[['6%', '18%', '0s', '-14deg'], ['74%', '10%', '.12s', '12deg'], ['40%', '-6%', '.22s', '-6deg'], ['-4%', '60%', '.3s', '-18deg'], ['88%', '56%', '.38s', '16deg'], ['52%', '70%', '.48s', '4deg']].map(([l, t, d, r]) => (
+            <svg class="beer" style={`left:${l};top:${t};--d:${d};--r:${r}`}><use href="#beer" /></svg>
+          ))}
+        </div>
+        <figcaption class="en-text">{me.caption}</figcaption>
+      </figure>
+    )}
+    {dog && (
+      <figure class="dog dogfig" id="dog-main" tabindex="0" role="button" aria-label="愛犬の写真。触れると飛んでいって、下の写真と入れ替わります" style="--fly-y:140vh;--fly-x:30%;--land-y:90vh;--land-x:20%">
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+          <symbol id="paw" viewBox="0 0 32 32">
+            <ellipse cx="16" cy="21" rx="7.5" ry="6" fill="currentColor" />
+            <ellipse cx="7" cy="13" rx="3" ry="3.8" fill="currentColor" />
+            <ellipse cx="13" cy="8.5" rx="3" ry="3.8" fill="currentColor" />
+            <ellipse cx="19" cy="8.5" rx="3" ry="3.8" fill="currentColor" />
+            <ellipse cx="25" cy="13" rx="3" ry="3.8" fill="currentColor" />
+          </symbol>
+          <symbol id="spark" viewBox="0 0 16 16"><path d="M8 0 L9.6 6.4 L16 8 L9.6 9.6 L8 16 L6.4 9.6 L0 8 L6.4 6.4 Z" fill="currentColor" /></symbol>
+        </svg>
+        <div class="card">
+          <img src={dog.src} alt={dog.alt} width="640" height="800" loading="lazy" />
+        </div>
+        <div class="paws" aria-hidden="true">
+          {[['6%','-6%','-20deg','0s'],['30%','-12%','15deg','.12s'],['58%','-4%','-8deg','.24s'],['84%','-10%','22deg','.36s'],['-8%','40%','40deg','.3s'],['96%','60%','-35deg','.42s']].map(([l,t,r,d]) => (
+            <svg class={`paw ${d === '.12s' || d === '.36s' ? 'pink' : ''}`} style={`left:${l};top:${t};--r:${r};--d:${d}`}><use href="#paw" /></svg>
+          ))}
+          {[['-4%','8%','.1s'],['100%','20%','.3s'],['48%','-14%','.5s'],['92%','94%','.2s'],['2%','96%','.4s']].map(([l,t,d], i) => (
+            <svg class={`spark ${i % 2 ? 'blue' : ''}`} style={`left:${l};top:${t};--d:${d}`}><use href="#spark" /></svg>
+          ))}
+        </div>
+        <figcaption class="en-text"><span class="cap-text">{dog.caption}</span></figcaption>
+      </figure>
+    )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 80px); align-items: start; }
+  .rows { margin: 0; border-top: 1px solid var(--rule); }
+  .row { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px 24px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+  dt { display: flex; flex-direction: column; font-family: var(--serif); font-weight: 600; letter-spacing: 0.08em; }
+  dt .label { letter-spacing: 0.12em; }
+  dd { margin: 0; display: flex; flex-direction: column; gap: 2px; }
+  .patents { display: grid; gap: 4px; font-size: 14px; }
+  .mono { font-family: var(--mono); font-size: 12px; color: var(--ai); margin-right: 6px; }
+  .side { display: grid; gap: 28px; padding-top: 14px; }
+  .me { margin: 0; position: relative; cursor: pointer; }
+  .me .card { position: relative; border-radius: 2px; }
+  .me img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 2px; background: var(--paper-2); }
+  .me figcaption { margin-top: 8px; }
+  .me:focus-visible { outline: 2px solid var(--ai); outline-offset: 4px; }
+  /* 触れるとビールが出る */
+  .me.cheers { z-index: 6; }
+  .beers { position: absolute; inset: 0; pointer-events: none; }
+  .beer { position: absolute; width: 46px; height: 52px; opacity: 0; transform: rotate(var(--r)) scale(.3); }
+  .foam { fill: var(--paper); stroke: var(--ink-2); stroke-width: 1.3; stroke-linejoin: round; }
+  .glass { fill: #e9a825; stroke: var(--ink-2); stroke-width: 1.3; stroke-linejoin: round; }
+  .handle { fill: none; stroke: var(--ink-2); stroke-width: 1.3; }
+  .line { fill: none; stroke: var(--paper); stroke-opacity: .55; stroke-width: 1.2; }
+  .me.cheers .beer { animation: beer-pop 1.5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d); }
+  @keyframes beer-pop {
+    0% { opacity: 0; transform: translateY(24px) rotate(var(--r)) scale(.3); }
+    25% { opacity: 1; transform: translateY(-10px) rotate(calc(var(--r) * -1)) scale(1.15); }
+    45% { transform: translateY(0) rotate(var(--r)) scale(1); }
+    80% { opacity: 1; transform: translateY(-4px) rotate(var(--r)) scale(1); }
+    100% { opacity: 0; transform: translateY(-30px) rotate(var(--r)) scale(.9); }
+  }
+  @media (prefers-reduced-motion: reduce) { .me.cheers .beer { animation: none; } .me.cheers .beer { opacity: 1; transform: none; } }
+  .dog { margin: 0; position: relative; }
+  .dog .card { position: relative; }
+  .dog img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 2px; background: var(--paper-2); }
+  .dog .card { overflow: hidden; border-radius: 2px; box-shadow: 0 0 0 6px var(--paper), 0 18px 40px -22px rgba(0,0,0,.35); }
+  .dog:focus-visible .card { outline: 2px solid var(--ai); outline-offset: 4px; }
+  .dog img { transition: transform .6s ease; }
+  .dog:hover img { transform: scale(1.04); }
+  .dog figcaption { margin-top: 8px; }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+    .row { grid-template-columns: 1fr; gap: 4px; }
+    dt { flex-direction: row; gap: 10px; align-items: baseline; }
+    .side { max-width: 360px; }
+  }
+</style>
+
+<script>
+  const me = document.getElementById('me');
+  if (me) {
+    let busy = false;
+    const cheers = () => {
+      if (busy) return; busy = true;
+      me.classList.add('cheers');
+      setTimeout(() => { me.classList.remove('cheers'); busy = false; }, 2100);
+    };
+    me.addEventListener('mouseenter', cheers);
+    me.addEventListener('click', cheers);
+    me.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cheers(); } });
+  }
+</script>

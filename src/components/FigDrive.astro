@@ -1,0 +1,64 @@
+---
+/* 進: 中心に 事実 → 解釈 → 提案 の三層。周囲の関係者へ、相手に合わせた伝え方で届けて合意をとる。 */
+const C = { x: 260, y: 152 }, R = 116;
+const people = [
+  { id: 'cust',  a: -90,  label: '顧客',       en: 'Customer', cap: '顧客の言葉は事実として、そのまま記録する。解釈を混ぜない。' },
+  { id: 'board', a: -18,  label: 'ボード',     en: 'Board',    cap: 'ボードには結論と根拠を先に。選択肢と推奨を一枚で、決めてもらう。' },
+  { id: 'eng',   a: 54,   label: '開発',       en: 'Engineers',      cap: 'エンジニアには事実と制約をそのまま渡す。解釈は一緒に作る。' },
+  { id: 'cs',    a: 126,  label: 'CS',         en: 'Support',  cap: 'CS には影響範囲と時期を先に。問い合わせに備えられるように。' },
+  { id: 'sales', a: 198,  label: 'セールス',   en: 'Sales',    cap: 'セールスには、顧客への伝え方まで含めて共有する。現場の言葉に翻訳して。' },
+].map((p) => {
+  const rad = (p.a * Math.PI) / 180;
+  const x = C.x + R * Math.cos(rad), y = C.y + R * Math.sin(rad);
+  const ex = C.x + 66 * Math.cos(rad), ey = C.y + 66 * Math.sin(rad);
+  return { ...p, x, y, ex, ey, labelDy: p.a === -90 ? -30 : 34 };
+});
+const rings = [
+  { id: 'fact',  r: 24, label: '事実', en: 'Fact',     cap: 'まず事実。誰が見ても同じになるものだけをここに置く。' },
+  { id: 'inter', r: 45, label: '解釈', en: 'Reading',  cap: '次に解釈。事実から何が言えるか。別の読み方はないか。' },
+  { id: 'prop',  r: 66, label: '提案', en: 'Proposal', cap: '最後に提案。誰に・どの順で・どう伝えるかまで決めて、合意をとりに行く。' },
+];
+const allPeople = people.map((p) => `${p.id} e-${p.id}`).join(' ');
+---
+<figure class="ifig" data-ifig>
+  <svg viewBox="0 0 520 300" role="img" aria-label="事実・解釈・提案の三層を中心に、関係者と合意をとる図">
+    {people.map((p) => <line class="d edge" data-id={`e-${p.id}`} x1={p.ex} y1={p.ey} x2={p.x} y2={p.y} />)}
+
+    <circle class="orbit" cx={C.x} cy={C.y} r={R} />
+
+    {[...rings].reverse().map((r) => (
+      <g class="d hit ring" data-id={r.id} data-links={r.id === 'prop' ? allPeople : ''} data-cap={r.cap} role="button" aria-label={r.label}>
+        <circle class="node" cx={C.x} cy={C.y} r={r.r} />
+        <text x={C.x} y={C.y - r.r + 13} text-anchor="middle" class="t sm ring-lbl">{r.label}</text>
+      </g>
+    ))}
+    <circle class="core" cx={C.x} cy={C.y} r="3" />
+
+    {people.map((p) => (
+      <g class="d hit person" data-id={p.id} data-links={`e-${p.id} prop inter fact`} data-cap={p.cap} role="button" aria-label={p.label}>
+        <circle class="node" cx={p.x} cy={p.y} r="21" />
+        <text x={p.x} y={p.y + 4} text-anchor="middle" class="t sm">{p.label}</text>
+        <text x={p.x} y={p.y + p.labelDy} text-anchor="middle" class="lbl">{p.en}</text>
+      </g>
+    ))}
+  </svg>
+  <figcaption>
+    <span class="cap">中心は 事実 → 解釈 → 提案 の三層。関係者に触れると、その人に何をどう届けるかが出ます。</span>
+    <span class="hint en-text">Hover or tap a stakeholder or a ring.</span>
+  </figcaption>
+</figure>
+
+<style>
+  .orbit { fill: none; stroke: var(--rule); stroke-width: 1; stroke-dasharray: 2 6; transform-box: fill-box; transform-origin: center; animation: spin 60s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg) } }
+  .ring .node { fill: var(--paper); }
+  .ring[data-id="fact"] .node { fill: var(--ai-soft); }
+  .ring.on .node { fill: var(--ai-soft); }
+  .core { fill: var(--ai); }
+  .ring-lbl { letter-spacing: .08em; }
+  .person .node { fill: var(--paper); }
+  .person.on .node { fill: var(--ai); }
+  .person.on .t { fill: var(--paper); }
+  .person.on .lbl { fill: var(--ai); }
+  @media (prefers-reduced-motion: reduce) { .orbit { animation: none; } }
+</style>

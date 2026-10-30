@@ -1,0 +1,108 @@
+---
+import SectionHead from './SectionHead.astro';
+import { publications } from '../data/publications';
+const kindLabel = { journal: 'Journal', international: 'Intl. conf.', domestic: 'Domestic' } as const;
+const extra = publications.filter((p) => p.extra).length;
+---
+<section class="section" aria-labelledby="research">
+  <div class="container grid">
+    <div>
+      <SectionHead ja="研究と論文" en="Research" id="research" />
+      <p class="section-lede">
+        大学院時代、Linux・ファイルシステム・IoT・セキュリティを研究。崩壊しつつある軍艦島の建物から振動データを長期取得する「軍艦島モニタリング」に関連して、現場で大量の IoT データを安く確実に溜めるための FUSE ベースのファイルシステム DIY-SDFS を設計・実装しました。
+        <span class="en-text" style="display:block">In graduate school I worked on Linux, file systems, IoT and security. Around the long-term structural monitoring of Gunkanjima (Hashima Island), I designed and built DIY-SDFS, a FUSE-based file system that pools multiple NAS boxes to store large volumes of sensor data cheaply on site.</span>
+      </p>
+      <dl class="facts">
+        <div><dt class="label">Theme</dt><dd>Linux / FileSystem / IoT / Security</dd></div>
+        <div><dt class="label">Field</dt><dd>軍艦島モニタリング <span class="en-text">Gunkanjima structural monitoring</span></dd></div>
+        <div><dt class="label">Built</dt><dd>DIY-SDFS <a class="gh" href="https://github.com/sarulab-ou/DIY-SDFS" target="_blank" rel="noopener">GitHub ↗</a> <span class="en-text">multi-NAS integrated file system on FUSE</span></dd></div>
+      </dl>
+      <!-- センサー → FUSE → カーネル → ブロック割り当て → NAS の流れを描く図（src/scripts/fsfig.ts） -->
+      <canvas id="fsfig" class="fsfig" aria-hidden="true"></canvas>
+    </div>
+    <ol class="pubs" id="pubs">
+      {publications.map((p) => (
+        <li data-extra={p.extra ? '' : undefined} hidden={!!p.extra}>
+          <div class="meta">
+            <span class={`kind ${p.kind}`}>{kindLabel[p.kind]}</span>
+            <span class="year">{p.year}</span>
+          </div>
+          <h3>{p.link ? <a href={p.link} target="_blank" rel="noopener">{p.title}</a> : p.title}</h3>
+          {p.titleEn && <p class="en-text">{p.titleEn}</p>}
+          <p class="authors">{p.authors}</p>
+          <p class="venue">{p.venue}</p>
+          {(p.link || p.pdf || p.doi) && (
+            <p class="links">
+              {p.link && <a href={p.link} target="_blank" rel="noopener">{p.linkLabel ?? 'Link'} ↗</a>}
+              {p.pdf && <a href={p.pdf} target="_blank" rel="noopener">PDF ↗</a>}
+              {p.doi && <a href={`https://doi.org/${p.doi}`} target="_blank" rel="noopener">doi:{p.doi}</a>}
+            </p>
+          )}
+        </li>
+      ))}
+      {extra > 0 && (
+        <li class="expand-row">
+          <button type="button" class="expand" id="pubs-more" aria-expanded="false" aria-controls="pubs">
+            <span class="open">+ 追加で表示する <span class="en-text">Show {extra} more</span></span>
+            <span class="close">− 閉じる <span class="en-text">Show less</span></span>
+          </button>
+        </li>
+      )}
+    </ol>
+  </div>
+</section>
+
+<script>
+  import { createFsFig } from '../scripts/fsfig';
+  const fs = document.getElementById('fsfig') as HTMLCanvasElement | null;
+  if (fs) createFsFig(fs);
+
+  const btn = document.getElementById('pubs-more');
+  const list = document.getElementById('pubs');
+  if (btn && list) {
+    const extras = Array.from(list.querySelectorAll<HTMLElement>('[data-extra]'));
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      extras.forEach((el) => { el.hidden = !open; });
+    });
+  }
+</script>
+
+<style>
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: clamp(32px, 6vw, 80px); align-items: start; }
+  .facts { margin: 28px 0 0; display: grid; gap: 10px; }
+  .facts div { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule); font-size: 14px; }
+  .facts dt { padding-top: 4px; }
+  .facts dd { margin: 0; }
+  .facts .en-text { display: block; }
+  .fsfig { display: block; width: 100%; height: 380px; margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 12px; box-sizing: content-box; }
+  .pubs { border-top: 1px solid var(--rule); }
+  .pubs li { padding: 20px 0; border-bottom: 1px solid var(--rule); display: grid; gap: 4px; }
+  .pubs li[hidden] { display: none; }
+  .pubs .expand-row { padding: 0; }
+  .expand {
+    display: flex; gap: 10px; align-items: baseline; width: 100%; margin: 0; padding: 14px 0;
+    background: none; border: 0; font: inherit; font-size: 14px; color: var(--ai); cursor: pointer; text-align: left;
+  }
+  .expand:hover { background: var(--ai-soft); }
+  .expand:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+  .expand .en-text { margin-left: 6px; }
+  .expand .close { display: none; }
+  .expand[aria-expanded="true"] .open { display: none; }
+  .expand[aria-expanded="true"] .close { display: inline; }
+  .meta { display: flex; gap: 12px; align-items: baseline; margin-bottom: 4px; }
+  .kind { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
+  .kind.journal, .kind.international { color: var(--ai); }
+  .year { font-family: var(--mono); font-size: 11px; color: var(--mute); letter-spacing: 0.08em; }
+  h3 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 17px; letter-spacing: 0.02em; line-height: 1.55; text-wrap: balance; }
+  h3 a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+  h3 a:hover { border-color: var(--ai); }
+  .authors { font-size: 13px; color: var(--ink-2); margin-top: 4px; }
+  .venue { font-size: 12.5px; color: var(--mute); }
+  .links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 4px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; }
+  .links a, .gh { color: var(--ai); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .links a:hover, .gh:hover { border-bottom-color: var(--ai); }
+  .gh { font-family: var(--mono); font-size: 11px; margin-left: 6px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+</style>

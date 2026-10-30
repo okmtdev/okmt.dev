@@ -1,0 +1,86 @@
+---
+import SectionHead from './SectionHead.astro';
+import FigTech from './FigTech.astro';
+import FigData from './FigData.astro';
+import FigDrive from './FigDrive.astro';
+import { strengths } from '../data/strengths';
+
+const figs = { tech: FigTech, data: FigData, drive: FigDrive } as const;
+---
+<section class="section" aria-labelledby="strengths">
+  <div class="container">
+    <div class="intro">
+      <div>
+        <SectionHead ja="強み" en="Edge" id="strengths" />
+        <p class="section-lede">
+          作ることも、測ることも、前に進めることも、自分の手でやってきました。この三つを一人の中で往復させながら、プロダクトの意思決定を速く、確かなものにしていく。それが私の強みです。
+          <span class="en-text" style="display:block">I have built things, measured them and pushed them forward with my own hands. Moving between the three inside one head is how I make product decisions faster and better grounded.</span>
+        </p>
+      </div>
+    </div>
+
+    <ol class="rows">
+      {strengths.map((s) => {
+        const Fig = figs[s.fig as keyof typeof figs];
+        return (
+          <li class="row">
+            <div class="text">
+              <span class="glyph" aria-hidden="true">{s.glyph}</span>
+              <div>
+                <h3>{s.title}</h3>
+                <p class="en-text">{s.titleEn}</p>
+                <p class="body">{s.body}</p>
+                <p class="en-text">{s.bodyEn}</p>
+              </div>
+            </div>
+            <Fig />
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .rows { margin-top: clamp(40px, 6vw, 72px); border-top: 1px solid var(--rule); }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 72px); align-items: center; padding-block: clamp(36px, 5vw, 56px); border-bottom: 1px solid var(--rule); }
+  .text { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 20px; align-items: start; }
+  .glyph { font-family: var(--serif); font-weight: 800; font-size: 48px; line-height: 1; color: var(--ai); padding-top: 4px; }
+  h3 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 20px; letter-spacing: 0.04em; line-height: 1.45; text-wrap: balance; }
+  .body { margin-top: 10px; font-size: 14px; color: var(--ink-2); max-width: 46em; }
+  .body + .en-text { margin-top: 6px; }
+
+  @media (max-width: 860px) {
+    .row { grid-template-columns: 1fr; }
+    .text { grid-template-columns: 48px minmax(0, 1fr); gap: 14px; }
+    .glyph { font-size: 38px; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ifig]').forEach((fig) => {
+    const cap = fig.querySelector<HTMLElement>('.cap');
+    const def = cap?.textContent ?? '';
+    let pinned: HTMLElement | null = null;
+    const set = (hit: HTMLElement | null) => {
+      fig.querySelectorAll('.on').forEach((e) => e.classList.remove('on'));
+      if (!hit) { fig.classList.remove('hov'); if (cap) cap.textContent = def; return; }
+      fig.classList.add('hov');
+      hit.classList.add('on');
+      (hit.dataset.links || '').split(/\s+/).filter(Boolean).forEach((id) => {
+        fig.querySelectorAll(`[data-id~="${id}"]`).forEach((e) => e.classList.add('on'));
+      });
+      if (cap) cap.textContent = hit.dataset.cap || def;
+    };
+    fig.querySelectorAll<HTMLElement>('.hit').forEach((h) => {
+      h.setAttribute('tabindex', '0');
+      h.addEventListener('mouseenter', () => { if (!pinned) set(h); });
+      h.addEventListener('mouseleave', () => { if (!pinned) set(null); });
+      h.addEventListener('focus', () => set(h));
+      h.addEventListener('blur', () => { if (!pinned) set(null); });
+      h.addEventListener('click', () => { pinned = pinned === h ? null : h; set(pinned); });
+      h.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); h.click(); } });
+    });
+    fig.addEventListener('mouseleave', () => { if (!pinned) set(null); });
+  });
+</script>

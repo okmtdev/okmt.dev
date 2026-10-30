@@ -1,0 +1,8 @@
+---
+interface Props { ja: string; en: string; id?: string }
+const { ja, en, id } = Astro.props;
+---
+<div class="section-head">
+  <h2 id={id}>{ja}</h2>
+  <span class="en">{en}</span>
+</div>

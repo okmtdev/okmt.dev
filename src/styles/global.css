@@ -1,0 +1,148 @@
+/* Layout: 和紙の上に縦書きの一文。横組み本文は余白で支える。
+   Color: 生成り / 墨 / 藍。 Type: Shippori Mincho B1 (display) / Zen Kaku Gothic New (body) / DM Mono (labels) */
+:root {
+  --paper: #f3efe6;
+  --paper-2: #ebe6da;
+  --ink: #231f1a;
+  --ink-2: #4a443c;
+  --mute: #7c7468;
+  --rule: #d9d2c3;
+  --ai: #1d3f73;
+  --ai-soft: rgba(29, 63, 115, 0.10);
+  --sakura: #d98fa0;
+  --ok: #2e7d4f;     /* shipped の緑 */
+
+  --serif: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  --mono: "DM Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --gutter: max(20px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(20px, env(safe-area-inset-right, 0px));
+  --measure: 38em;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1a1917;
+    --paper-2: #211f1c;
+    --ink: #ece7dc;
+    --ink-2: #c9c2b4;
+    --mute: #9a9285;
+    --rule: #36322c;
+    --ai: #8fb0e6;
+    --ai-soft: rgba(143, 176, 230, 0.14);
+    --sakura: #e3a9b6;
+    --ok: #6cc08a;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html { background: var(--paper); scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.9;
+  font-feature-settings: "palt" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--ai); }
+:focus-visible { outline: 2px solid var(--ai); outline-offset: 3px; }
+img, svg, canvas { max-width: 100%; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+.container {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+
+/* Section chrome */
+.section { border-top: 1px solid var(--rule); padding-block: clamp(64px, 9vw, 112px); }
+.section-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 20px;
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+.section-head h2 {
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(26px, 3.2vw, 36px); letter-spacing: 0.08em; line-height: 1.3;
+  margin: 0; text-wrap: balance;
+}
+.section-head .en { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mute); }
+.section-lede { color: var(--ink-2); max-width: var(--measure); }
+.section-lede .en-text { margin-top: 8px; }
+
+/* Bilingual body text */
+.en-text { font-size: 13px; line-height: 1.75; color: var(--mute); }
+.label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); }
+.tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--ink-2); border: 1px solid var(--rule); padding: 1px 8px; border-radius: 2px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Interactive figures (strengths). Hovering a .hit keeps itself + its data-links lit and dims the rest. */
+.ifig { margin: 0; }
+.ifig svg { width: 100%; height: auto; display: block; overflow: visible; }
+.ifig .d { transition: opacity .35s ease, fill .35s ease, stroke .35s ease; }
+.ifig.hov .d { opacity: .14; }
+.ifig.hov .d.on { opacity: 1; }
+.ifig .hit { cursor: pointer; outline: none; }
+.ifig .hit:focus-visible { outline: 2px solid var(--ai); outline-offset: 4px; }
+.ifig .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: .16em; fill: var(--mute); text-transform: uppercase; }
+.ifig .t { font-family: var(--sans); font-size: 11.5px; fill: var(--ink); font-weight: 500; }
+.ifig .t.sm { font-size: 10px; fill: var(--ink-2); font-weight: 400; }
+.ifig .edge { fill: none; stroke: var(--ink); stroke-opacity: .28; stroke-width: 1; }
+.ifig .edge.on { stroke: var(--ai); stroke-opacity: 1; stroke-width: 1.4; stroke-dasharray: 4 5; animation: ifig-dash 1.2s linear infinite; }
+@keyframes ifig-dash { to { stroke-dashoffset: -18; } }
+.ifig .node { fill: var(--paper); stroke: var(--ink); stroke-width: 1.1; }
+.ifig .on .node, .ifig .node.on { stroke: var(--ai); stroke-width: 1.5; }
+.ifig .cap { display: block; min-height: 2.6em; margin-top: 10px; font-size: 13px; color: var(--ink-2); transition: color .3s; }
+.ifig.hov .cap { color: var(--ai); }
+.ifig .hint { display: block; margin-top: 4px; }
+@media (prefers-reduced-motion: reduce) { .ifig .edge.on { animation: none; } }
+
+/* Dog photo swap: paw prints and sparkles shared by Profile and Private figures. */
+.paws { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.paw { position: absolute; width: 42px; height: 42px; opacity: 0; color: var(--ai); transform: rotate(var(--r, 0deg)) scale(.3); }
+.paw.pink { color: var(--sakura); }
+.spark { position: absolute; width: 20px; height: 20px; opacity: 0; color: var(--sakura); }
+.spark.blue { color: var(--ai); }
+.playing .paw { animation: paw-pop 1.1s ease-out both; animation-delay: var(--d, 0s); }
+.playing .spark { animation: twinkle 1.2s ease-in-out both; animation-delay: var(--d, 0s); }
+@keyframes paw-pop {
+  0%   { opacity: 0; transform: rotate(var(--r, 0deg)) scale(.3); }
+  35%  { opacity: .9; transform: rotate(var(--r, 0deg)) scale(1); }
+  100% { opacity: 0; transform: rotate(var(--r, 0deg)) scale(1.05) translateY(-8px); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(.2) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(90deg); }
+}
+@media (prefers-reduced-motion: reduce) { .playing .paw, .playing .spark { animation: none; } }
+
+/* Dog photo swap: either figure can trigger it. The trigger flies off (direction via --fly-y), the other arrives. */
+.dogfig { position: relative; cursor: pointer; }
+.dogfig.playing { z-index: 6; }
+.dogfig.fly .card { animation: dog-fly 1.1s cubic-bezier(.45, 0, .85, .35) forwards; }
+@keyframes dog-fly {
+  0%   { transform: none; opacity: 1; }
+  15%  { transform: translate(-4%, 4%) rotate(-30deg) scale(1.04); }
+  70%  { opacity: 1; }
+  100% { transform: translate(var(--fly-x, -30%), var(--fly-y, -140vh)) rotate(1080deg) scale(.15); opacity: 0; }
+}
+.dogfig.land .card { animation: dog-land 1s cubic-bezier(.2, .85, .25, 1) both; }
+@keyframes dog-land {
+  from { transform: translate(var(--land-x, -20%), var(--land-y, -90vh)) rotate(-900deg) scale(.15); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+.dogfig.arrive img { animation: dog-arrive .9s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes dog-arrive { from { transform: rotate(540deg) scale(.15); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .dogfig.fly .card, .dogfig.land .card, .dogfig.arrive img { animation: none; } }

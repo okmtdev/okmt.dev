@@ -1,0 +1,26 @@
+---
+import { profile, links } from '../data/profile';
+const year = new Date().getFullYear();
+---
+<footer class="section">
+  <div class="container row">
+    <div>
+      <p class="brand">{profile.siteName}</p>
+      <p class="en-text">{profile.name} / {profile.nameEn}</p>
+    </div>
+    <ul class="links">
+      {links.map((l) => <li><a href={l.href} target="_blank" rel="me noopener">{l.label}</a></li>)}
+    </ul>
+    <p class="copy label">© {year} {profile.nameEn}</p>
+  </div>
+</footer>
+
+<style>
+  footer { padding-block: 40px 56px; }
+  .row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px 40px; }
+  .brand { font-family: var(--serif); font-weight: 600; letter-spacing: 0.08em; font-size: 18px; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; }
+  .links a { text-decoration: none; color: var(--ink-2); border-bottom: 1px solid var(--rule); }
+  .links a:hover { color: var(--ai); border-color: var(--ai); }
+  .copy { margin: 0; }
+</style>

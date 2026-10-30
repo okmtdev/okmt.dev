@@ -1,0 +1,62 @@
+---
+import '../styles/global.css';
+import { profile, links } from '../data/profile';
+
+interface Props { title?: string; description?: string }
+const { title = `${profile.name}（${profile.nameEn}） — ${profile.title}`, description = profile.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.nameEn,
+  alternateName: [profile.name, profile.formerName, profile.formerNameEn],
+  url: profile.url,
+  jobTitle: 'Product Manager',
+  worksFor: { '@type': 'Organization', name: profile.companyEn, url: profile.companyUrl },
+  birthDate: profile.birthDate,
+  birthPlace: { '@type': 'Place', name: profile.birthPlaceEn },
+  homeLocation: { '@type': 'Place', name: profile.locationEn },
+  knowsLanguage: ['ja', 'en'],
+  sameAs: links.map((l) => l.href),
+};
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#f3efe6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1917" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={profile.siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL('/og.png', Astro.site)} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap"
+    />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,70 @@
+---
+/* 数: 散らばった顧客の声が、分類の一点を通って、右の4本の数になる。 */
+let seed = 20210311;
+const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+const cats = [
+  { id: 'c0', label: '外部連携', en: 'integrations', n: 12, cap: '外部連携への要望。ばらばらの言い回しが、ここで一本の数になる。' },
+  { id: 'c1', label: '通話品質', en: 'call quality', n: 9,  cap: '通話品質の声。再現条件と環境が揃うほど、優先度の議論が速くなる。' },
+  { id: 'c2', label: 'API',    en: 'public api',    n: 8,  cap: 'API への要望。誰が、何を、どの頻度で叩きたいか。仕様はここから。' },
+  { id: 'c3', label: '画面',   en: 'ui',            n: 7,  cap: '画面の使い勝手。件数は少なくても、解約理由に出てくるものは別枠で見る。' },
+];
+const hub = { x: 262, y: 150 };
+const dots: { x: number; y: number; r: number; c: string; path: string; delay: string }[] = [];
+cats.forEach((c) => {
+  for (let i = 0; i < c.n; i++) {
+    const x = 22 + rnd() * 150, y = 28 + rnd() * 244, r = 1.8 + rnd() * 2.2;
+    dots.push({ x, y, r, c: c.id, path: `M${x.toFixed(1)},${y.toFixed(1)} Q${(x + (hub.x - x) * 0.6).toFixed(1)},${y.toFixed(1)} ${hub.x - 20},${hub.y}`, delay: `${(rnd() * -6).toFixed(2)}s` });
+  }
+});
+const rows = [66, 114, 162, 210];
+const allLinks = cats.map((c) => `${c.id} e-${c.id} b-${c.id}`).join(' ') + ' hub';
+---
+<figure class="ifig" data-ifig>
+  <svg viewBox="0 0 520 300" role="img" aria-label="散らばった顧客の声が分類されて4つの数になる図">
+    <text x="22" y="16" class="lbl">Voice of customer</text>
+    <text x="330" y="16" class="lbl">Count</text>
+
+    <g class="flows">{dots.map((d) => <path class={`d edge`} data-id={`e-${d.c}`} d={d.path} />)}</g>
+    <g class="dots">{dots.map((d) => <circle class={`d dot`} data-id={d.c} cx={d.x} cy={d.y} r={d.r} style={`animation-delay:${d.delay}`} />)}</g>
+
+    {cats.map((c, i) => (
+      <path class="d edge" data-id={`e-${c.id}`} d={`M${hub.x + 20} ${hub.y} C${hub.x + 60} ${hub.y} ${300} ${rows[i] + 6} 330 ${rows[i] + 6}`} />
+    ))}
+
+    <g class="d hit" data-id="hub" data-links={allLinks} data-cap="ここで分類。生成AIが要望にラベルを付け、件数にする。数になって初めて、優先順位は議論できる。" role="button" aria-label="分類">
+      <circle class="node hub" cx={hub.x} cy={hub.y} r="22" />
+      <circle class="pulse" cx={hub.x} cy={hub.y} r="22" />
+      <text x={hub.x} y={hub.y + 4} text-anchor="middle" class="t sm">分類</text>
+    </g>
+
+    {cats.map((c, i) => (
+      <g class="d hit" data-id={`b-${c.id}`} data-links={`${c.id} e-${c.id} hub`} data-cap={c.cap} role="button" aria-label={c.label}>
+        <rect class="hitbox" x="326" y={rows[i] - 14} width="190" height="36" />
+        <text x="330" y={rows[i] - 2} class="t sm">{c.label}<tspan class="lbl" dx="8">{c.en}</tspan></text>
+        <rect class="bar" x="330" y={rows[i] + 2} width={c.n * 11} height="9" />
+        <text x={330 + c.n * 11 + 8} y={rows[i] + 10} class="num">{c.n}</text>
+      </g>
+    ))}
+    <text x="330" y="262" class="lbl">※ 件数は例</text>
+  </svg>
+  <figcaption>
+    <span class="cap">散らばった声を分類して数える。右の項目に触れると、その声だけが残ります。</span>
+    <span class="hint en-text">Hover or tap a category to see which voices feed it. Counts are illustrative.</span>
+  </figcaption>
+</figure>
+
+<style>
+  .dot { fill: var(--ink); fill-opacity: .6; transform-box: fill-box; transform-origin: center; animation: drift 5s ease-in-out infinite alternate; }
+  .dot.on { fill: var(--ai); fill-opacity: 1; }
+  @keyframes drift { from { transform: translate(0, 0) } to { transform: translate(3px, -4px) } }
+  .flows .edge { stroke-opacity: .12; stroke-width: .7; }
+  .node.hub { fill: var(--paper); }
+  .pulse { fill: none; stroke: var(--ai); stroke-width: 1; opacity: 0; transform-box: fill-box; transform-origin: center; animation: pulse 3s ease-out infinite; }
+  @keyframes pulse { 0% { transform: scale(1); opacity: .7 } 100% { transform: scale(1.9); opacity: 0 } }
+  .hitbox { fill: transparent; }
+  .bar { fill: var(--ink); fill-opacity: .18; }
+  .on .bar { fill: var(--ai); fill-opacity: 1; }
+  .num { font-family: var(--mono); font-size: 11px; fill: var(--mute); font-variant-numeric: tabular-nums; }
+  .on .num { fill: var(--ai); }
+  @media (prefers-reduced-motion: reduce) { .dot, .pulse { animation: none; } .pulse { display: none; } }
+</style>

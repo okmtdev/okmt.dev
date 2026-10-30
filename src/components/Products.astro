@@ -1,0 +1,104 @@
+---
+import SectionHead from './SectionHead.astro';
+import { getCollection, render } from 'astro:content';
+
+// featured を先頭に固定し、その中と残りはそれぞれ order 昇順。展開しても最初の並びは変わらない
+const products = (await getCollection('products')).sort(
+  (a, b) => Number(b.data.featured) - Number(a.data.featured) || a.data.order - b.data.order,
+);
+const rendered = await Promise.all(products.map(async (p) => ({ p, Content: p.body?.trim() ? (await render(p)).Content : null })));
+const statusLabel: Record<string, string> = { shipped: 'Shipped', ongoing: 'Ongoing', poc: 'PoC', sunset: 'Sunset' };
+// featured: true のカードだけ最初から表示。残りは「追加で表示する」で展開
+const extra = rendered.filter(({ p }) => !p.data.featured).length;
+---
+<section class="section" aria-labelledby="products">
+  <div class="container">
+    <SectionHead ja="手掛けてきたもの" en="Shipped" id="products" />
+    <ul class="grid" id="products-grid">
+      {rendered.map(({ p, Content }) => (
+        <li class="card" data-extra={p.data.featured ? undefined : ''} hidden={!p.data.featured}>
+          <div class="head">
+            <span class={`status ${p.data.status}`}>{statusLabel[p.data.status]}</span>
+            <span class="period">{p.data.period}</span>
+          </div>
+          <h3>{p.data.title}</h3>
+          <p class="title-en en-text">{p.data.titleEn}</p>
+          <p class="role label">{p.data.org} · {p.data.role}</p>
+          <p class="summary">{p.data.summary}</p>
+          <p class="en-text">{p.data.summaryEn}</p>
+          {Content && (
+            <details class="more">
+              <summary>詳しく <span class="en-text">More</span></summary>
+              <div class="prose"><Content /></div>
+            </details>
+          )}
+          <div class="foot">
+            <div class="tags">{p.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+            {p.data.link && <a class="link" href={p.data.link} target="_blank" rel="noopener">{p.data.linkLabel ?? 'Link'} ↗</a>}
+          </div>
+        </li>
+      ))}
+    </ul>
+    {extra > 0 && (
+      <button type="button" class="expand" id="products-more" aria-expanded="false" aria-controls="products-grid">
+        <span class="open">+ 追加で表示する <span class="en-text">Show {extra} more</span></span>
+        <span class="close">− 閉じる <span class="en-text">Show less</span></span>
+      </button>
+    )}
+  </div>
+</section>
+
+<script>
+  const btn = document.getElementById('products-more');
+  const grid = document.getElementById('products-grid');
+  if (btn && grid) {
+    const extras = Array.from(grid.querySelectorAll<HTMLElement>('[data-extra]'));
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      extras.forEach((el) => { el.hidden = !open; });
+      if (!open) grid.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+  }
+</script>
+
+<style>
+  .grid {
+    margin-top: clamp(32px, 5vw, 56px);
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    border-top: 1px solid var(--rule); border-left: 1px solid var(--rule);
+  }
+  .card[hidden] { display: none; }
+  .card { background: var(--paper); border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 26px 24px 22px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .status { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); display: inline-flex; align-items: center; gap: 7px; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--mute); }
+  .status.ongoing::before { background: var(--ai); border-color: var(--ai); }
+  .status.shipped { color: var(--ok); }
+  .status.shipped::before { background: var(--ok); border-color: var(--ok); }
+  .status.sunset::before { border-style: dashed; }
+  .period { font-family: var(--mono); font-size: 11px; color: var(--mute); letter-spacing: 0.06em; }
+  h3 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 20px; letter-spacing: 0.04em; line-height: 1.4; text-wrap: balance; }
+  .title-en { margin-top: -2px; }
+  .role { margin-top: 8px; }
+  .summary { margin-top: 10px; font-size: 14px; }
+  .more { margin-top: 8px; font-size: 14px; }
+  .more summary { cursor: pointer; color: var(--ai); list-style: none; display: inline-flex; gap: 8px; align-items: baseline; }
+  .more summary::-webkit-details-marker { display: none; }
+  .more summary::before { content: "+"; font-family: var(--mono); }
+  .more[open] summary::before { content: "−"; }
+  .prose { margin-top: 8px; color: var(--ink-2); font-size: 14px; }
+  .prose :global(p) { margin: 0 0 8px; }
+  .foot { margin-top: auto; padding-top: 16px; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .link { font-family: var(--mono); font-size: 12px; text-decoration: none; color: var(--ai); white-space: nowrap; }
+  .expand {
+    display: flex; gap: 10px; align-items: baseline; width: 100%; margin: 0; padding: 16px 24px;
+    background: none; border: 1px solid var(--rule); border-top: 0; font: inherit; font-size: 14px; color: var(--ai); cursor: pointer; text-align: left;
+  }
+  .expand:hover { background: var(--ai-soft); }
+  .expand:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+  .expand .en-text { margin-left: 6px; }
+  .expand .close { display: none; }
+  .expand[aria-expanded="true"] .open { display: none; }
+  .expand[aria-expanded="true"] .close { display: inline; }
+</style>

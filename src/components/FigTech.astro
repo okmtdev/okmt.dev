@@ -1,0 +1,80 @@
+---
+/* 技: Why（顧客の課題）→ What（ロードマップ）→ How（API・サービス・基盤）の依存の一本道。ホバーで波及範囲だけが残る。
+   層の分け方は『プロダクトマネジメントのすべて』（及川卓也・曽根原春樹・小城久美子, 翔泳社, 2021）の「プロダクトの4階層」Core / Why / What / How に倣う。Core は図では省略。 */
+const CH = ['e-pr-rm','e-rm-api','e-rm-int','e-api-s1','e-api-s2','e-int-s2','e-int-s3','e-s1-inf','e-s2-inf','e-s3-inf'];
+const nodes = {
+  problem: { links: 'roadmap api integ s1 s2 s3 infra ' + CH.join(' '), cap: 'Why の層。「誰を、どんな状態にしたいか」。ここから基盤までは一本道で、コストはいちばん下まで降りて初めて見える。' },
+  roadmap: { links: 'problem api integ s1 s2 s3 infra ' + CH.join(' '), cap: 'What の層。ロードマップの優先順位を一つ動かすと、どのサービスと基盤に波及するかがそのまま見える。' },
+  api:     { links: 'problem roadmap s1 s2 infra e-pr-rm e-rm-api e-api-s1 e-api-s2 e-s1-inf e-s2-inf', cap: '公開APIの機能一つは、通話と連絡先の2サービスと基盤に手が入る。だから見積もれる。' },
+  integ:   { links: 'problem roadmap s2 s3 infra e-pr-rm e-rm-int e-int-s2 e-int-s3 e-s2-inf e-s3-inf', cap: '外部連携は連絡先と通知をまたぐ。調整すべきチームが、着手前に分かる。' },
+  s1:      { links: 'problem roadmap api infra e-pr-rm e-rm-api e-api-s1 e-s1-inf', cap: '通話サービス。API 経由で呼ばれる。ここの変更は API の契約に跳ね返る。' },
+  s2:      { links: 'problem roadmap api integ infra e-pr-rm e-rm-api e-rm-int e-api-s2 e-int-s2 e-s2-inf', cap: '連絡先サービスは API と連携の両方から呼ばれる。ここが詰まると両方止まる。' },
+  s3:      { links: 'problem roadmap integ infra e-pr-rm e-rm-int e-int-s3 e-s3-inf', cap: '通知サービス。連携のイベントを配る。失敗時の再送設計が品質を決める。' },
+  infra:   { links: 's1 s2 s3 e-s1-inf e-s2-inf e-s3-inf', cap: 'EKS と Terraform。ここを自分で書いていたから、運用コストと障害の形まで読める。' },
+};
+---
+<figure class="ifig" data-ifig>
+  <svg viewBox="0 0 520 330" role="img" aria-label="顧客の課題からロードマップ、API、サービス、基盤までの依存関係図">
+    <text x="8" y="14" class="lbl core">Core · mission / strategy</text>
+    <text x="8" y="52" class="lbl">Why</text>
+    <text x="8" y="111" class="lbl">What</text>
+    <text x="8" y="183" class="lbl">How</text>
+    <line x1="14" y1="62" x2="14" y2="296" class="axis" />
+
+    <g class="d edge" data-id="e-pr-rm"><path d="M260 66 V88" /></g>
+    <g class="d edge" data-id="e-rm-api"><path d="M220 126 C220 150 150 140 150 160" /></g>
+    <g class="d edge" data-id="e-rm-int"><path d="M300 126 C300 150 370 140 370 160" /></g>
+    <g class="d edge" data-id="e-api-s1"><path d="M120 198 C120 215 90 212 90 228" /></g>
+    <g class="d edge" data-id="e-api-s2"><path d="M180 198 C180 215 240 212 240 228" /></g>
+    <g class="d edge" data-id="e-int-s2"><path d="M340 198 C340 215 280 212 280 228" /></g>
+    <g class="d edge" data-id="e-int-s3"><path d="M400 198 C400 215 430 212 430 228" /></g>
+    <g class="d edge" data-id="e-s1-inf"><path d="M90 266 V290" /></g>
+    <g class="d edge" data-id="e-s2-inf"><path d="M260 266 V290" /></g>
+    <g class="d edge" data-id="e-s3-inf"><path d="M430 266 V290" /></g>
+
+    <g class="d hit" data-id="problem" data-links={nodes.problem.links} data-cap={nodes.problem.cap} role="button" aria-label="顧客の課題">
+      <rect class="node why" x="150" y="30" width="220" height="36" rx="18" />
+      <text x="260" y="52" text-anchor="middle" class="t">顧客の課題 <tspan class="sm">· 誰を、どんな状態に</tspan></text>
+    </g>
+    <g class="d hit" data-id="roadmap" data-links={nodes.roadmap.links} data-cap={nodes.roadmap.cap} role="button" aria-label="ロードマップ">
+      <rect class="node" x="160" y="88" width="200" height="38" rx="2" />
+      <text x="260" y="111" text-anchor="middle" class="t">ロードマップ <tspan class="sm">· roadmap</tspan></text>
+    </g>
+    <g class="d hit" data-id="api" data-links={nodes.api.links} data-cap={nodes.api.cap} role="button" aria-label="公開API">
+      <rect class="node" x="80" y="160" width="140" height="38" rx="2" />
+      <text x="150" y="183" text-anchor="middle" class="t">公開API</text>
+    </g>
+    <g class="d hit" data-id="integ" data-links={nodes.integ.links} data-cap={nodes.integ.cap} role="button" aria-label="外部連携">
+      <rect class="node" x="300" y="160" width="140" height="38" rx="2" />
+      <text x="370" y="183" text-anchor="middle" class="t">外部連携</text>
+    </g>
+    <g class="d hit" data-id="s1" data-links={nodes.s1.links} data-cap={nodes.s1.cap} role="button" aria-label="通話サービス">
+      <rect class="node" x="40" y="228" width="100" height="38" rx="2" />
+      <text x="90" y="251" text-anchor="middle" class="t sm">通話 svc</text>
+    </g>
+    <g class="d hit" data-id="s2" data-links={nodes.s2.links} data-cap={nodes.s2.cap} role="button" aria-label="連絡先サービス">
+      <rect class="node" x="210" y="228" width="100" height="38" rx="2" />
+      <text x="260" y="251" text-anchor="middle" class="t sm">連絡先 svc</text>
+    </g>
+    <g class="d hit" data-id="s3" data-links={nodes.s3.links} data-cap={nodes.s3.cap} role="button" aria-label="通知サービス">
+      <rect class="node" x="380" y="228" width="100" height="38" rx="2" />
+      <text x="430" y="251" text-anchor="middle" class="t sm">通知 svc</text>
+    </g>
+    <g class="d hit" data-id="infra" data-links={nodes.infra.links} data-cap={nodes.infra.cap} role="button" aria-label="基盤">
+      <rect class="node how" x="40" y="290" width="440" height="32" rx="2" />
+      <text x="260" y="310" text-anchor="middle" class="t sm">Amazon EKS · Terraform · AWS</text>
+    </g>
+  </svg>
+  <figcaption>
+    <span class="cap">Why → What → How の一本道。要素に触れると、その変更が波及する範囲だけが残ります。</span>
+    <span class="hint en-text">Hover or tap a box to trace what one change touches. Layers follow the Core / Why / What / How model in <i>プロダクトマネジメントのすべて</i> (Oikawa, Sonehara &amp; Koshiro, 2021); Core is left out of the figure.</span>
+  </figcaption>
+</figure>
+
+<style>
+  .axis { stroke: var(--rule); stroke-width: 1; }
+  .core { opacity: .55; }
+  .node.why { stroke-dasharray: 3 3; }
+  .node.how { fill: var(--ai-soft); }
+  .ifig.hov .on .node.why { stroke-dasharray: none; }
+</style>

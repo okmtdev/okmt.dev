@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500&family=DM+Mono:wght@400&display=swap">
+<style>
+  html,body{margin:0;width:1200px;height:630px;overflow:hidden}
+  body{background:#f3efe6;color:#231f1a;font-family:"Zen Kaku Gothic New",sans-serif;position:relative}
+  .pad{position:absolute;inset:0;padding:44px 64px;display:grid;grid-template-columns:1fr auto;gap:40px}
+  .top{font-family:"DM Mono",monospace;font-size:16px;letter-spacing:.16em;color:#7c7468;text-transform:uppercase}
+  .name{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:96px;letter-spacing:.06em;line-height:1.1;margin:28px 0 8px}
+  .en{font-family:"Shippori Mincho B1",serif;font-size:28px;letter-spacing:.04em}
+  .former{font-size:17px;color:#7c7468;margin-top:6px}
+  .role{font-size:22px;font-weight:500;margin-top:36px}
+  .wave{position:absolute;left:64px;bottom:64px;width:620px;height:90px;display:flex;align-items:center;gap:3px}
+  .wave i{flex:1;background:#d9d2c3;border-radius:1px}
+  .wave i.hot{background:#1d3f73}
+  .now{position:absolute;left:64px;bottom:160px;font-family:"DM Mono",monospace;font-size:14px;letter-spacing:.16em;color:#7c7468}
+  .now::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:#1d3f73;margin-right:12px;vertical-align:1px}
+  .tate{writing-mode:vertical-rl;font-family:"Shippori Mincho B1",serif;font-weight:600;font-size:34px;letter-spacing:.12em;line-height:2;margin:0;height:542px}
+  .tate b{font-weight:800;color:#1d3f73}
+  .url{position:absolute;right:64px;bottom:24px;font-family:"DM Mono",monospace;font-size:16px;letter-spacing:.16em;color:#7c7468}
+</style></head><body>
+<div class="pad">
+  <div>
+    <div class="top">Product Manager · ex-Software Engineer · ex-Founder</div>
+    <div class="name">中島 祐樹</div>
+    <div class="en">Yuki Nakajima</div>
+    <div class="former">（旧姓：岡本 祐樹 / formerly Yuki Okamoto）</div>
+    <div class="role">Product Manager, MiiTel — 株式会社RevComm</div>
+  </div>
+  <p class="tate">コードを書いていた手で、<br><b>プロダクトの意思決定</b>をする。</p>
+</div>
+<div class="now">NOW · MIITEL PRODUCT MANAGER · SINCE 2025.07</div>
+<div class="wave" id="w"></div>
+<div class="url">okmt.dev</div>
+<script>
+  const w=document.getElementById('w');let s=7;const r=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff};
+  for(let i=0;i<110;i++){const x=i/110,env=0.25+0.75*Math.pow(Math.sin(x*Math.PI),1.1);const a=0.15+r()*0.85;const el=document.createElement('i');el.style.height=Math.max(3,a*env*90)+'px';if(x>0.8)el.className='hot';w.appendChild(el)}
+</script>
+</body></html>

@@ -1,0 +1,121 @@
+---
+import SectionHead from './SectionHead.astro';
+import { career } from '../data/career';
+// v2.0.0 より前（index が v2.0.0 より大きい）は「追加で表示する」を押すまで隠す
+const cut = career.findIndex((c) => c.version === 'v2.0.0');
+const isExtra = (i: number) => cut >= 0 && i > cut;
+const extra = career.filter((_, i) => isExtra(i)).length;
+---
+<section class="section" aria-labelledby="career">
+  <div class="container">
+    <SectionHead ja="キャリア" en="Changelog" id="career" />
+    <ol class="log" id="career-log">
+      {career.map((c, i) => (
+        <li class={`entry ${c.type}`} data-extra={isExtra(i) ? '' : undefined} hidden={isExtra(i)}>
+          {c.fig && <canvas class="bg" data-view={c.fig.view} data-flavor={c.fig.flavor ?? ''} aria-hidden="true"></canvas>}
+          <div class="meta">
+            <span class="ver">{c.version}</span>
+            <time class="date">{c.date}</time>
+          </div>
+          <div class="body">
+            <h3>
+              <span class="title">{c.title}</span>
+              <span class="org">{c.org}</span>
+            </h3>
+            <p class="en-text">{c.titleEn} · {c.orgEn}</p>
+            {c.bullets.length > 0 && (
+              <ul class="bullets">{c.bullets.map((b) => typeof b === 'string' ? <li>{b}</li> : (
+                <li>{b.text} <a class="blink" href={b.href} target="_blank" rel="noopener">{b.label} ↗</a></li>
+              ))}</ul>
+            )}
+            <p class="en-text summary">{c.summaryEn}</p>
+            {c.tags && c.tags.length > 0 && (
+              <div class="tags">{c.tags.map((t) => <span class="tag">{t}</span>)}</div>
+            )}
+          </div>
+        </li>
+      ))}
+      {extra > 0 && (
+        <li class="expand-row">
+          <button type="button" class="expand" id="career-more" aria-expanded="false" aria-controls="career-log">
+            <span class="open">+ 追加で表示する <span class="en-text">Show {extra} earlier versions</span></span>
+            <span class="close">− 閉じる <span class="en-text">Show less</span></span>
+          </button>
+        </li>
+      )}
+    </ol>
+  </div>
+</section>
+
+<script>
+  import { createFig, type View, type Flavor } from '../scripts/fig';
+  import { createFsFig } from '../scripts/fsfig';
+  // 各エントリの背景に、ヒーローや研究の図を薄く置く。粒子はエントリの箱の中だけで跳ね回る
+  document.querySelectorAll<HTMLCanvasElement>('#career-log canvas.bg').forEach((cv) => {
+    if (cv.dataset.view === 'fs') { createFsFig(cv, { labels: false }); return; }
+    createFig({ canvas: cv, figHeight: 150 }).set((cv.dataset.view || 'wave') as View, (cv.dataset.flavor || 'pm') as Flavor);
+  });
+
+  const btn = document.getElementById('career-more');
+  const list = document.getElementById('career-log');
+  if (btn && list) {
+    const extras = Array.from(list.querySelectorAll<HTMLElement>('[data-extra]'));
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      extras.forEach((el) => { el.hidden = !open; });
+    });
+  }
+</script>
+
+<style>
+  .log { margin-top: clamp(32px, 5vw, 56px); border-top: 1px solid var(--rule); }
+  .entry {
+    position: relative; isolation: isolate;
+    display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 12px 32px;
+    padding: 28px 0; border-bottom: 1px solid var(--rule);
+  }
+  .entry > .bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.28; pointer-events: none; }
+  .entry > .meta, .entry > .body { position: relative; }
+  .entry[hidden] { display: none; }
+  .expand-row { padding: 0; border-bottom: 1px solid var(--rule); }
+  .expand {
+    display: flex; gap: 10px; align-items: baseline; width: 100%; margin: 0; padding: 16px 0;
+    background: none; border: 0; font: inherit; font-size: 14px; color: var(--ai); cursor: pointer; text-align: left;
+  }
+  .expand:hover { background: var(--ai-soft); }
+  .expand:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+  .expand .en-text { margin-left: 6px; }
+  .expand .close { display: none; }
+  .expand[aria-expanded="true"] .open { display: none; }
+  .expand[aria-expanded="true"] .close { display: inline; }
+  .meta { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .ver {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em;
+    color: var(--ai); border: 1px solid currentColor; padding: 2px 9px; border-radius: 2px;
+  }
+  .major .ver { background: var(--ai); color: var(--paper); border-color: var(--ai); }
+  .next { background: linear-gradient(to right, transparent, var(--ai-soft) 40%, transparent); }
+  .next .ver { border-style: dashed; color: var(--mute); }
+  .next .date { color: var(--ai); }
+  .next h3 .title { color: var(--ai); }
+  .next .bullets li::before { background: var(--mute); }
+  .next .tag { border-style: dashed; }
+  .date { font-family: var(--mono); font-size: 12px; color: var(--mute); letter-spacing: 0.06em; }
+  h3 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 21px; letter-spacing: 0.04em; line-height: 1.4; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+  .org { font-family: var(--sans); font-weight: 400; font-size: 14px; color: var(--ink-2); }
+  .body > .en-text { margin-top: 2px; }
+  .bullets { margin-top: 14px; display: grid; gap: 6px; padding-left: 1.2em; list-style: none; }
+  .bullets li { position: relative; }
+  .bullets li::before { content: ""; position: absolute; left: -1.2em; top: 0.85em; width: 6px; height: 1px; background: var(--ai); }
+  .blink { font-family: var(--mono); font-size: 12px; color: var(--ai); text-decoration: none; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+  .blink:hover { border-bottom-color: var(--ai); }
+  .summary { margin-top: 10px; max-width: 60ch; }
+  .tags { margin-top: 14px; }
+  .patch { padding-block: 18px; }
+  .patch h3 { font-size: 17px; }
+  @media (max-width: 640px) {
+    .entry { grid-template-columns: 1fr; gap: 10px; }
+    .meta { flex-direction: row; align-items: center; gap: 12px; }
+  }
+</style>

@@ -1,0 +1,185 @@
+---
+import { profile } from '../data/profile';
+
+// 縦書きコピーを一文字ずつ span に分解（表示アニメーション用）
+let i = 0;
+type Ch = { ch: string; strong: boolean; i: number; br?: boolean };
+const chars: Ch[] = profile.catch.flatMap((seg: { text: string; strong?: boolean; br?: boolean }) => {
+  const cs: Ch[] = Array.from(seg.text).map((ch) => ({ ch, strong: !!seg.strong, i: i++ }));
+  if (seg.br) cs.push({ ch: '', strong: false, i, br: true });
+  return cs;
+});
+/* ヒーロー下段の年表タブ。クリックでラベルと図（canvas）が切り替わる。デフォルトは 2025。
+   view: mail = 2021 メール配信、biz = 2022 起業、wave = 音声波形（flavor dev / pm で質感が変わる） */
+const stages = [
+  { year: '2021', org: 'Yahoo Japan', role: 'Backend Engineer', view: 'mail', head: '2021.04 - 2023.06 · Yahoo Japan · Backend Engineer' },
+  { year: '2022', org: 'Lupinus Software', role: 'Founder & CEO', view: 'biz', head: '2022.05 - 2023.07 · 合同会社ルピナスソフトウェア · 代表' },
+  { year: '2023', org: 'RevComm', role: 'Software Developer', view: 'wave', flavor: 'dev', head: '2023.08 - 2025.06 · RevComm · Software Developer', from: 0.38, to: 0.62 },
+  { year: '2025', org: 'RevComm', role: 'Product Manager', view: 'wave', flavor: 'pm', head: '2025.07 - NOW · RevComm Product Manager', from: 0.38, to: 0.62, now: true },
+];
+---
+
+<header class="hero container" id="top">
+  <nav class="topbar" aria-label="サイト内">
+    <span class="brand">{profile.siteName}</span>
+    <ul>
+      <li><a href="#strengths">Edge</a></li>
+      <li><a href="#profile">Profile</a></li>
+      <li><a href="#products">Shipped</a></li>
+      <li><a href="#career">Changelog</a></li>
+    </ul>
+  </nav>
+
+  <div class="hero-grid">
+    <div class="who">
+      <p class="label">Product Manager · ex-Software Engineer · ex-Founder</p>
+      <h1 class="name">{profile.name}</h1>
+      <p class="name-en">
+        {profile.nameEn}
+        <span class="former">（旧姓：{profile.formerName} / formerly {profile.formerNameEn}）</span>
+      </p>
+      <p class="role">
+        {profile.title} — <a href={profile.companyUrl} target="_blank" rel="noopener">{profile.company}</a>
+      </p>
+      <p class="en-text">{profile.title} at RevComm. Formerly a software engineer at Yahoo Japan and founder of an SI company.</p>
+
+      <div class="now" id="stage" data-view="wave" aria-label="キャリアの節目">
+        <div class="now-head">
+          <span class="rec" aria-hidden="true"></span>
+          <span class="label" id="stage-head">{stages[3].head}</span>
+        </div>
+        <canvas id="fig" class="fig" aria-hidden="true"></canvas>
+        <ol class="ticks" role="tablist" aria-label="年を選ぶ">
+          {stages.map((st, i) => (
+            <li>
+              <button type="button" role="tab" class="tick" data-year={st.year} data-view={st.view} data-flavor={st.flavor ?? ''} data-head={st.head} data-from={st.from ?? ''} data-to={st.to ?? ''} data-now={st.now ? '1' : ''} aria-selected={i === stages.length - 1 ? 'true' : 'false'}>
+                <span class="label">{st.year}</span>
+                <span class="who">{st.org} · {st.role}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+
+    <p class="tate" lang="ja">
+      <span class="sr-only">{profile.catch.map((s) => s.text).join('')}</span>
+      {chars.map((c) => c.br ? <br /> : (
+        <span class={c.strong ? 'ch strong' : 'ch'} style={`--i:${c.i}`} aria-hidden="true">{c.ch}</span>
+      ))}
+    </p>
+  </div>
+  <p class="catch-en en-text">{profile.catchEn}</p>
+  <!-- 2021 のメールが画面中を飛び回るためのオーバーレイ（クリックは透過） -->
+  <canvas id="spray" class="spray" aria-hidden="true" hidden></canvas>
+</header>
+
+<style>
+  .hero { padding-block: 20px clamp(48px, 7vw, 88px); }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+    padding-block: 14px; border-bottom: 1px solid var(--rule);
+    margin-bottom: clamp(40px, 6vw, 72px);
+  }
+  .topbar ul { display: flex; gap: 22px; }
+  .topbar a { text-decoration: none; color: var(--mute); }
+  .topbar a:hover { color: var(--ink); }
+  .brand { color: var(--ink); }
+
+  .hero-grid {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(32px, 6vw, 96px); align-items: stretch;
+  }
+  .who { display: flex; flex-direction: column; min-width: 0; }
+  .name {
+    font-family: var(--serif); font-weight: 800;
+    font-size: clamp(44px, 7vw, 76px); letter-spacing: 0.06em; line-height: 1.15;
+    margin: 10px 0 6px;
+  }
+  .name-en { font-family: var(--serif); font-size: 18px; letter-spacing: 0.04em; }
+  .former { display: block; font-family: var(--sans); font-size: 12px; color: var(--mute); margin-top: 2px; }
+  .role { margin-top: 22px; font-weight: 500; }
+  .role a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .who > .en-text { margin-top: 6px; max-width: 46ch; }
+
+  .now { margin-top: auto; padding-top: 40px; }
+  .now-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .rec { width: 8px; height: 8px; border-radius: 50%; background: var(--mute); box-shadow: 0 0 0 3px var(--ai-soft); flex: none; }
+  .now.is-now .rec { background: var(--ai); animation: pulse 2.4s ease-in-out infinite; }
+  .fig { display: block; width: 100%; height: 150px; }
+  .spray { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
+  .spray[hidden] { display: none; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+  .ticks {
+    list-style: none; padding-left: 0; margin: 0;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;
+    border-top: 1px solid var(--rule); padding-top: 8px; margin-top: 10px;
+  }
+  .tick {
+    display: block; width: 100%; text-align: left; background: none; border: 0; padding: 6px 8px 8px; margin: 0;
+    font: inherit; font-size: 11px; color: var(--mute); line-height: 1.5; cursor: pointer; border-radius: 2px;
+    border-top: 2px solid transparent; transition: color .2s, border-color .2s, background .2s;
+  }
+  .tick .label { display: block; color: var(--mute); transition: color .2s; }
+  .tick:hover { color: var(--ink); background: var(--ai-soft); }
+  .tick[aria-selected="true"] { color: var(--ink-2); border-top-color: var(--ai); }
+  .tick[aria-selected="true"] .label { color: var(--ai); }
+  .tick:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+
+  .tate {
+    writing-mode: vertical-rl; text-orientation: mixed;
+    font-family: var(--serif); font-weight: 600;
+    font-size: clamp(28px, 3.4vw, 42px); letter-spacing: 0.14em; line-height: 1.7;
+    margin: 0; padding-inline: 8px;
+    height: 17.2em; align-self: start;
+  }
+  .tate .strong { font-weight: 800; color: var(--ai); }
+  .ch { display: inline-block; animation: rise 600ms cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * 45ms + 200ms); }
+  @keyframes rise { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: none } }
+  .catch-en { margin-top: 28px; text-align: right; }
+
+  @media (prefers-reduced-motion: reduce) { .ch, .rec { animation: none; } }
+  @media (max-width: 760px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .tate { order: -1; height: 17.2em; justify-self: end; font-size: 28px; }
+    .catch-en { text-align: left; }
+    .fig { height: 140px; }
+    .ticks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .topbar ul { gap: 14px; }
+  }
+</style>
+
+<script>
+  import { createFig, type View, type Flavor } from '../scripts/fig';
+  const stage = document.getElementById('stage');
+  const fig = document.getElementById('fig') as HTMLCanvasElement | null;
+  const spray = document.getElementById('spray') as HTMLCanvasElement | null;
+  const head = document.getElementById('stage-head');
+  if (stage && fig && spray && head) {
+    const F = createFig({ canvas: fig, spray });
+
+    // ---- タブ
+    const tabs = Array.from(stage.querySelectorAll<HTMLButtonElement>('.tick'));
+    const select = (tab: HTMLButtonElement) => {
+      tabs.forEach((b) => b.setAttribute('aria-selected', b === tab ? 'true' : 'false'));
+      const v = (tab.dataset.view || 'wave') as View;
+      const f = (tab.dataset.flavor || 'pm') as Flavor;
+      F.set(v, f, parseFloat(tab.dataset.from || '0.38'), parseFloat(tab.dataset.to || '0.62'));
+      head.textContent = tab.dataset.head || '';
+      stage.dataset.view = v;
+      stage.classList.toggle('is-now', tab.dataset.now === '1');
+    };
+    tabs.forEach((b, i) => {
+      b.addEventListener('click', () => select(b));
+      b.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+          n.focus(); select(n);
+        }
+      });
+    });
+    stage.classList.add('is-now');
+  }
+</script>
