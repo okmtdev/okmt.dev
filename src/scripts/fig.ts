@@ -34,11 +34,15 @@ export const colors = () => c;
 
 // 2023 / 2025 の波形の右から流れ込む言葉。[右側 1 行目, 右側 2 行目, 左側 日本語, 左側 英語]
 const pmWords: [string, string, string, string][] = [
-  ['Salesforce に通話を残したい', 'Log calls in Salesforce', 'Salesforce 連携', 'Salesforce integration'],
-  ['自社システムから通話を扱いたい', 'Call from our own tools', 'MiiTel API β', 'MiiTel API (beta)'],
-  ['音声が途切れることがある', 'Audio sometimes drops', '通話品質の改善', 'Call-quality improvements'],
-  ['通話をあとから振り返りたい', 'Review calls afterwards', 'Phone Analytics', 'Phone Analytics'],
+  ['アポ・成約を増やしたい', 'Win more meetings and deals', 'MiiTel Phone', 'MiiTel Phone'],
+  ['CRM に履歴を残したい', 'Keep call history in the CRM', 'CRM 連携', 'CRM integrations'],
+  ['成果の出る“勝ちパターン”を作りたい', 'Find the patterns that win', 'MiiTel Analytics', 'MiiTel Analytics'],
+  ['自社でデータ活用したい', 'Use the data in our own systems', 'MiiTel API（β）', 'MiiTel API (beta)'],
+  ['冒頭が聞こえない・途中で途切れる', 'Audio cuts at the start or drops mid-call', '通話品質改善（発生から効果確認まで）', 'Call-quality fixes, from report to verified effect'],
+  ['ノンコア業務の自動化', 'Automate non-core work', 'MiiTel Phone', 'MiiTel Phone'],
+  ['外部アプリケーションとデータを紐付け', 'Link data with external apps', '各種 Webhook', 'Webhooks'],
   ['大量のユーザーを一括で移したい', 'Move users in bulk', 'ユーザー移行', 'User migration'],
+  ['有効な営業スキルを定量可視化', 'Quantify the sales skills that work', 'MiiTel Analytics', 'MiiTel Analytics'],
   ['要望が多すぎて追えない', 'Too many requests to track', 'VoC の自動分類', 'Auto-classified VoC'],
 ];
 const devWords: [string, string, string, string][] = [
@@ -96,7 +100,7 @@ export function createFig(o: FigOptions) {
   };
 
   // ---- 状態
-  let mode: View = 'wave', flavor: Flavor = 'pm', from = 0.38, to = 0.62, modeT = 0, now = 0;
+  let mode: View = 'wave', flavor: Flavor = 'pm', from = 0.3, to = 0.54, modeT = 0, now = 0;
 
   // ---- 染み出す粒子。初速はまちまち、等速直線運動、箱の端で反射
   //      mail = 2021 の封筒、node = 2022 の人（近くの人と線でつながる）
@@ -161,7 +165,9 @@ export function createFig(o: FigOptions) {
     const mid = H / 2, amp0 = H * 0.42, dev = flavor === 'dev';
     const words = dev ? devWords : pmWords;
     const bars = Math.max(48, Math.floor(W / (dev ? 4 : 7))), bw = W / bars;
-    const lineX = to * W, fv = FLOW_V;
+    // 「現在」の帯。広い画面では指定どおり（やや左）、狭い画面では中央に寄せる
+    const span = to - from, from_ = W < 560 ? 0.5 - span / 2 : from, to_ = W < 560 ? 0.5 + span / 2 : to;
+    const lineX = to_ * W, fv = FLOW_V;
     if (dev) {
       fx.strokeStyle = c.rule; fx.lineWidth = 1; fx.setLineDash([2, 5]);
       for (const l of [0.33, 0.66, 1]) {
@@ -172,7 +178,7 @@ export function createFig(o: FigOptions) {
       for (let k = 0; k <= 40; k++) { const x = (k / 40) * W; fx.moveTo(x, H - (k % 5 === 0 ? 8 : 4)); fx.lineTo(x, H); }
       fx.stroke();
     } else {
-      fx.fillStyle = c.aiSoft; fx.fillRect(from * W, 6, (to - from) * W, H - 12);
+      fx.fillStyle = c.aiSoft; fx.fillRect(from_ * W, 6, (to_ - from_) * W, H - 12);
     }
     const tops: number[] = [];
     const scroll = (t * fv) / bw;
@@ -182,7 +188,7 @@ export function createFig(o: FigOptions) {
       const a = (Math.sin(u * 0.33) * 0.5 + 0.5) * (Math.sin(u * 0.12) * 0.5 + 0.5) * (0.8 + 0.2 * Math.sin(t * 2 + i));
       const amp = (0.15 + a * 0.85) * env * amp0;
       tops.push(amp);
-      fx.fillStyle = x >= from && x < to ? c.ai : c.rule;
+      fx.fillStyle = x >= from_ && x < to_ ? c.ai : c.rule;
       if (dev) fx.fillRect(i * bw + bw * 0.35, mid - amp, Math.max(1, bw * 0.3), amp * 2);
       else rr(fx, i * bw + bw * 0.22, mid - amp, bw * 0.56, amp * 2, bw * 0.28);
     }
@@ -412,7 +418,7 @@ export function createFig(o: FigOptions) {
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) wake(); }, { rootMargin: '80px' }).observe(fig);
   if (reduce) frame(performance.now());
 
-  const set = (v: View, f: Flavor = 'pm', fr = 0.38, t = 0.62) => {
+  const set = (v: View, f: Flavor = 'pm', fr = 0.3, t = 0.54) => {
     if (v !== mode || f !== flavor) { fadeParts(); mode = v; modeT = 0; lane.length = 0; flow.length = 0; spawnIn = 0.1; emitIn = 0.4; wordIn = 0.6; }
     flavor = f; from = fr; to = t;
     if (reduce) frame(performance.now()); else wake();

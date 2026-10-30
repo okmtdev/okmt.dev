@@ -14,8 +14,8 @@ const chars: Ch[] = profile.catch.flatMap((seg: { text: string; strong?: boolean
 const stages = [
   { year: '2021', org: 'Yahoo Japan', role: 'Backend Engineer', view: 'mail', head: '2021.04 - 2023.06 · Yahoo Japan · Backend Engineer' },
   { year: '2022', org: 'Lupinus Software', role: 'Founder & CEO', view: 'biz', head: '2022.05 - 2023.07 · 合同会社ルピナスソフトウェア · 代表' },
-  { year: '2023', org: 'RevComm', role: 'Software Developer', view: 'wave', flavor: 'dev', head: '2023.08 - 2025.06 · RevComm · Software Developer', from: 0.38, to: 0.62 },
-  { year: '2025', org: 'RevComm', role: 'Product Manager', view: 'wave', flavor: 'pm', head: '2025.07 - NOW · RevComm Product Manager', from: 0.38, to: 0.62, now: true },
+  { year: '2023', org: 'RevComm', role: 'Software Developer', view: 'wave', flavor: 'dev', head: '2023.08 - 2025.06 · RevComm · Software Developer', from: 0.3, to: 0.54 },
+  { year: '2025', org: 'RevComm', role: 'Product Manager', view: 'wave', flavor: 'pm', head: '2025.07 - NOW · RevComm Product Manager', from: 0.3, to: 0.54, now: true },
 ];
 ---
 
@@ -165,7 +165,7 @@ const stages = [
       tabs.forEach((b) => b.setAttribute('aria-selected', b === tab ? 'true' : 'false'));
       const v = (tab.dataset.view || 'wave') as View;
       const f = (tab.dataset.flavor || 'pm') as Flavor;
-      F.set(v, f, parseFloat(tab.dataset.from || '0.38'), parseFloat(tab.dataset.to || '0.62'));
+      F.set(v, f, parseFloat(tab.dataset.from || '0.3'), parseFloat(tab.dataset.to || '0.54'));
       head.textContent = tab.dataset.head || '';
       stage.dataset.view = v;
       stage.classList.toggle('is-now', tab.dataset.now === '1');
