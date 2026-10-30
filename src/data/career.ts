@@ -29,7 +29,6 @@ export const career: CareerEntry[] = [
     type: 'next',
     bullets: [
       'プロダクトを通じて、SaaS 事業の成長を力強く牽引できる存在になる',
-      '技術・数字・現場の言葉を翻訳して、組織の判断の速度と質を上げる',
       'IoT のように、モノと情報が交わる領域で、自らの手で作りたいものはまだ尽きない',
     ],
     summaryEn:
@@ -46,12 +45,11 @@ export const career: CareerEntry[] = [
     titleEn: 'Product Manager',
     type: 'major',
     bullets: [
-      '音声AI SaaS「MiiTel」の MiiTel Phone / Phone Analytics、Salesforce などの外部連携、公開API・プラットフォーム、通話品質の中長期方針とロードマップを策定',
-      '公開API「MiiTel API（β）」の立ち上げPdM。海外チームと要件定義から技術選定、品質保証方針、リリースまでを推進',
+      '音声AI SaaS「MiiTel」の MiiTel Phone / Phone Analytics / 外部連携担当のプロダクトマネージャーとして、中長期方針とロードマップを策定。また、「MiiTel API（β）」の立ち上げPdMとして、海外チームと要件定義からリリースまでを推進',
       '現状を整理して方針を練り、ボードメンバーに対して開発優先度・リソース配分の意思決定を促す',
     ],
     summaryEn:
-      'Owns the mid-to-long-term roadmap for MiiTel Phone, integrations and the public API. Frames the situation and options so the board can decide on priorities and resourcing. Launched MiiTel API (beta) with an overseas engineering team.',
+      'Product manager for MiiTel Phone, Phone Analytics and integrations, owning the mid-to-long-term roadmap. Launched MiiTel API (beta) with an overseas engineering team, from requirements to release.',
     tags: ['Roadmap', 'Public API', 'Integrations', 'GenAI'],
   },
   {
@@ -64,13 +62,11 @@ export const career: CareerEntry[] = [
     titleEn: 'Backend Engineer / Project Lead',
     type: 'major',
     bullets: [
-      'バックエンドのマイクロサービスを開発・運用。FastAPI の Web API を、Terraform で定義した Amazon EKS 上に構築',
       '基盤刷新プロジェクトのリーダーとして移行計画・ロードマップ・API 設計・他チーム調整を主導',
-      'テスト戦略の策定と E2E テスト自動化で品質を改善',
       { text: 'AWS Startup Multi-Country GenAI GameDay（2024.08）にチームで出場し、国内 3 位・世界 5 位', href: 'https://note.com/revcomm_miitel/n/n1cc0ec3058b4', label: 'note' },
     ],
     summaryEn:
-      'Built and ran backend microservices: FastAPI Web APIs on Amazon EKS defined with Terraform. Led the platform re-architecture project end to end. Placed 5th worldwide (3rd in Japan) at the AWS GenAI GameDay in 2024.',
+      'Led the platform re-architecture project end to end. Placed 5th worldwide (3rd in Japan) at the AWS GenAI GameDay in 2024.',
     tags: ['Python', 'FastAPI', 'AWS', 'EKS', 'Terraform'],
   },
   {
@@ -118,12 +114,12 @@ export const career: CareerEntry[] = [
     titleEn: "M.Sc. — Linux, file systems, IoT and security",
     type: 'minor',
     bullets: [
-      '崩壊しつつある軍艦島の建物から振動などのビッグデータを長期取得する「軍艦島モニタリング」に関連し、現場で大量の IoT データを低コストに蓄積するための複数 NAS 統合型ファイルシステム DIY-SDFS を FUSE 上に設計・実装。情報処理学会論文誌（CDS）に掲載、IEEE PerCom Workshops（PerIoT\'20）で発表',
+      '大量の IoT データを低コストに蓄積するためのファイルシステムの設計・実装。情報処理学会論文誌（CDS）に掲載、IEEE PerCom Workshops（PerIoT\'20）で発表',
       'IoT デバイスの踏み台防止、IoT サービスのサーバレス実装に関する研究にも参加',
       '就職活動のときに、研究者志望から「IT で独り立ちできるビジネスをしたい」へ進路を切り替える',
     ],
     summaryEn:
-      'Designed and built DIY-SDFS, a FUSE-based file system that unifies multiple NAS boxes for on-site IoT data, in the context of long-term structural monitoring of Gunkanjima (Hashima Island). Published in an IPSJ journal and at IEEE PerCom Workshops.',
+      'Designed and built a file system for storing large volumes of IoT data at low cost. Published in an IPSJ journal (CDS) and at IEEE PerCom Workshops (PerIoT\'20).',
     tags: ['Linux', 'FUSE', 'IoT', 'Security', 'Research'],
   },
   {
