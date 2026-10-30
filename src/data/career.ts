@@ -97,10 +97,10 @@ export const career: CareerEntry[] = [
     type: 'major',
     bullets: [
       '広告メール配信システムの開発・運用。15 年以上稼働するレガシーコードの保守とモダンアーキテクチャへのリプレース',
-      'Development Relations を兼務。社内ハッカソンで最優秀賞を受賞',
+      'Development Relations を兼務。社内ハッカソンで Yahoo 賞を受賞',
     ],
     summaryEn:
-      'Maintained and replaced a 15-year-old email marketing system; built Web APIs with DDD and clean architecture. Won first prize at the in-house hackathon.',
+      'Maintained and replaced a 15-year-old email marketing system; built Web APIs with DDD and clean architecture. Won the Yahoo Award at the in-house hackathon.',
     tags: ['Java', 'DDD', 'Clean Architecture'],
   },
   {
