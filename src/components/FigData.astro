@@ -38,17 +38,19 @@ const allLinks = cats.map((c) => `${c.id} b-${c.id}`).join(' ') + ' hub';
         <text data-num={c.id} x={330 + Math.round(c.w * 150) + 8} y={rows[i] + 10} class="num">{c.n0.toLocaleString('en-US')}</text>
       </g>
     ))}
-    <text x="330" y="282" class="lbl">※ 件数はイメージ</text>
   </svg>
   <figcaption>
     <span class="cap">散らばった声を分類して数える。件数は増え続けます。右の項目に触れると、その声だけが残ります。</span>
   </figcaption>
 </figure>
 
+<style is:global>
+  /* 声の粒は JS で生成するため、スコープ外で当てる */
+  #figdata .dot { fill: var(--ai); fill-opacity: .42; stroke: var(--ai); stroke-opacity: .6; stroke-width: .8; transition: fill-opacity .3s; }
+  #figdata .dot.on { fill-opacity: 1; stroke-opacity: 1; }
+  #figdata .dot.go { fill-opacity: .95; stroke-opacity: 1; }
+</style>
 <style>
-  .dot { fill: var(--ink); fill-opacity: .55; }
-  .dot.on { fill: var(--ai); fill-opacity: 1; }
-  .dot.go { fill: var(--ai); fill-opacity: .9; }
   .flows .edge { stroke-opacity: .18; stroke-width: .8; }
   .node.hub { fill: var(--paper); }
   .pulse { fill: none; stroke: var(--ai); stroke-width: 1; opacity: 0; transform-box: fill-box; transform-origin: center; }
