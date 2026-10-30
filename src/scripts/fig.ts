@@ -41,7 +41,7 @@ const pmWords: [string, string, string, string][] = [
   ['冒頭が聞こえない・途中で途切れる', 'Audio cuts at the start or drops mid-call', '通話品質改善（発生から効果確認まで）', 'Call-quality fixes, from report to verified effect'],
   ['ノンコア業務の自動化', 'Automate non-core work', 'MiiTel Phone', 'MiiTel Phone'],
   ['外部アプリケーションとデータを紐付け', 'Link data with external apps', '各種 Webhook', 'Webhooks'],
-  ['大量のユーザーを一括で移したい', 'Move users in bulk', 'ユーザー移行', 'User migration'],
+  ['大量のユーザーを一括で移したい', 'Move users in bulk', 'ユーザー移行スクリプト', 'User migration scripts'],
   ['有効な営業スキルを定量可視化', 'Quantify the sales skills that work', 'MiiTel Analytics', 'MiiTel Analytics'],
   ['要望が多すぎて追えない', 'Too many requests to track', 'VoC の自動分類', 'Auto-classified VoC'],
 ];

@@ -1,80 +1,86 @@
 ---
-/* 技: Why（顧客の課題）→ What（ロードマップ）→ How（API・サービス・基盤）の依存の一本道。ホバーで波及範囲だけが残る。
-   層の分け方は『プロダクトマネジメントのすべて』（及川卓也・曽根原春樹・小城久美子, 翔泳社, 2021）の「プロダクトの4階層」Core / Why / What / How に倣う。Core は図では省略。 */
-const CH = ['e-pr-rm','e-rm-api','e-rm-int','e-api-s1','e-api-s2','e-int-s2','e-int-s3','e-s1-inf','e-s2-inf','e-s3-inf'];
-const nodes = {
-  problem: { links: 'roadmap api integ s1 s2 s3 infra ' + CH.join(' '), cap: 'Why の層。「誰を、どんな状態にしたいか」。ここから基盤までは一本道で、コストはいちばん下まで降りて初めて見える。' },
-  roadmap: { links: 'problem api integ s1 s2 s3 infra ' + CH.join(' '), cap: 'What の層。ロードマップの優先順位を一つ動かすと、どのサービスと基盤に波及するかがそのまま見える。' },
-  api:     { links: 'problem roadmap s1 s2 infra e-pr-rm e-rm-api e-api-s1 e-api-s2 e-s1-inf e-s2-inf', cap: '公開APIの機能一つは、通話と連絡先の2サービスと基盤に手が入る。だから見積もれる。' },
-  integ:   { links: 'problem roadmap s2 s3 infra e-pr-rm e-rm-int e-int-s2 e-int-s3 e-s2-inf e-s3-inf', cap: '外部連携は連絡先と通知をまたぐ。調整すべきチームが、着手前に分かる。' },
-  s1:      { links: 'problem roadmap api infra e-pr-rm e-rm-api e-api-s1 e-s1-inf', cap: '通話サービス。API 経由で呼ばれる。ここの変更は API の契約に跳ね返る。' },
-  s2:      { links: 'problem roadmap api integ infra e-pr-rm e-rm-api e-rm-int e-api-s2 e-int-s2 e-s2-inf', cap: '連絡先サービスは API と連携の両方から呼ばれる。ここが詰まると両方止まる。' },
-  s3:      { links: 'problem roadmap integ infra e-pr-rm e-rm-int e-int-s3 e-s3-inf', cap: '通知サービス。連携のイベントを配る。失敗時の再送設計が品質を決める。' },
-  infra:   { links: 's1 s2 s3 e-s1-inf e-s2-inf e-s3-inf', cap: 'EKS と Terraform。ここを自分で書いていたから、運用コストと障害の形まで読める。' },
+/* 技: プロダクトの 4 階層 Core / Why / What / How を、本業（RevComm）と副業の 2 軸で。ホバーでその軸だけが残る。
+   層の分け方は『プロダクトマネジメントのすべて』（及川卓也・曽根原春樹・小城久美子, 翔泳社, 2021）に倣う。 */
+type Pill = { id: string; col: 'rc' | 'sb'; x: number; y: number; w: number; h: number; label: string; xs?: boolean; cap: string };
+const RC = 217, SB = 453; // 各軸の中心 x
+const caps = {
+  core: 'Core の層。事業戦略 / Mission / Vision。会話を資産に変え、AI で業界に変革を起こす。すべての判断はここに遡る。',
+  why: 'Why の層。誰を、どんな状態にしたいか。Executive には事業判断の材料を、Sales にはセルフコーチングを、Manager にはチーム全体の把握を。',
+  what: 'What の層。Why を満たすために何を作るか。UX 改善、ロードマップ定義、カスタマージャーニー。',
+  how: 'How の層。どう実現するか。MiiTel Phone / Analytics / API（β）、CRM 連携、外部連携。ここを自分で書いていたから、上の層の判断に根拠が持てる。',
+  sbWhy: '副業の Why。事故の無い工事現場に。',
+  sbWhat: '副業の What。現場の人のメンタルモデルを捉え、それに合わせて設計する。',
+  sbHow: '副業の How。安全管理 SaaS として実装する。',
 };
+const row = (col: 'rc' | 'sb', layer: string, y: number, h: number, items: [string, number][], cap: string, gap = 6, xs = false): Pill[] => {
+  const total = items.reduce((a, [, w]) => a + w, 0) + gap * (items.length - 1);
+  let x = (col === 'rc' ? RC : SB) - total / 2;
+  return items.map(([label, w], i) => { const p = { id: `${col}-${layer}-${i}`, col, x, y, w, h, label, xs, cap }; x += w + gap; return p; });
+};
+const pills: Pill[] = [
+  ...row('rc', 'core', 28, 30, [['会話を資産に', 118], ['AI で業界に変革を', 150]], caps.core),
+  ...row('rc', 'why', 80, 22, [['Executive が事業判断の材料に', 210]], caps.why),
+  ...row('rc', 'why2', 106, 22, [['Sales がセルフコーチング', 210]], caps.why),
+  ...row('rc', 'why3', 132, 22, [['Manager がチーム全体を把握', 210]], caps.why),
+  ...row('rc', 'what', 174, 30, [['UX 改善', 68], ['ロードマップ定義', 108], ['カスタマージャーニー', 130]], caps.what),
+  ...row('rc', 'how', 226, 30, [['MiiTel Phone', 92], ['MiiTel Analytics', 112], ['MiiTel API（β）', 100]], caps.how),
+  ...row('rc', 'how2', 262, 30, [['CRM 連携', 80], ['外部連携', 80]], caps.how),
+  ...row('sb', 'why', 106, 22, [['事故の無い工事現場に', 118]], caps.sbWhy, 6, true),
+  ...row('sb', 'what', 174, 30, [['メンタルモデル', 118]], caps.sbWhat, 6, true),
+  ...row('sb', 'how', 244, 30, [['安全管理 SaaS', 118]], caps.sbHow, 6, true),
+];
+// 軸ごとの縦の連結線（層と層の間）
+const edges = [
+  { id: 'e-rc-1', col: 'rc', d: `M${RC} 58 V80` }, { id: 'e-rc-2', col: 'rc', d: `M${RC} 154 V174` }, { id: 'e-rc-3', col: 'rc', d: `M${RC} 204 V226` },
+  { id: 'e-sb-1', col: 'sb', d: `M${SB} 128 V174` }, { id: 'e-sb-2', col: 'sb', d: `M${SB} 204 V244` },
+];
+const links = (col: 'rc' | 'sb') => [...pills.filter((p) => p.col === col).map((p) => p.id), ...edges.filter((e) => e.col === col).map((e) => e.id)].join(' ');
+const stack = [
+  { k: 'AWS', v: 'EKS, ECS, S3, RDS, DynamoDB, CloudFront, Amplify, Lambda, Bedrock, …' },
+  { k: 'GCP', v: 'Kubernetes Engine, App Engine, Cloud Storage, Cloud SQL, BigQuery, Cloud Functions, …' },
+  { k: 'Azure', v: 'Azure VM, SQL Server, Azure Functions, Entra ID, …' },
+  { k: 'Lang / etc.', v: 'Terraform, Python, Go, Java, Ruby, React, JavaScript, TypeScript, Flutter, Linux' },
+];
 ---
 <figure class="ifig" data-ifig>
-  <svg viewBox="0 0 520 330" role="img" aria-label="顧客の課題からロードマップ、API、サービス、基盤までの依存関係図">
-    <text x="8" y="14" class="lbl core">Core · mission / strategy</text>
-    <text x="8" y="52" class="lbl">Why</text>
-    <text x="8" y="111" class="lbl">What</text>
-    <text x="8" y="183" class="lbl">How</text>
-    <line x1="14" y1="62" x2="14" y2="296" class="axis" />
+  <svg viewBox="0 0 520 300" role="img" aria-label="プロダクトの4階層（Core / Why / What / How）を本業と副業の2軸で示した図">
+    <text x={RC} y="14" text-anchor="middle" class="lbl">RevComm · 本業</text>
+    <text x={SB} y="14" text-anchor="middle" class="lbl">副業 · 建設現場</text>
+    <text x="8" y="47" class="lbl">Core</text>
+    <text x="8" y="121" class="lbl">Why</text>
+    <text x="8" y="193" class="lbl">What</text>
+    <text x="8" y="263" class="lbl">How</text>
+    <line x1="14" y1="54" x2="14" y2="292" class="axis" />
+    <line x1="385" y1="22" x2="385" y2="292" class="axis" />
 
-    <g class="d edge" data-id="e-pr-rm"><path d="M260 66 V88" /></g>
-    <g class="d edge" data-id="e-rm-api"><path d="M220 126 C220 150 150 140 150 160" /></g>
-    <g class="d edge" data-id="e-rm-int"><path d="M300 126 C300 150 370 140 370 160" /></g>
-    <g class="d edge" data-id="e-api-s1"><path d="M120 198 C120 215 90 212 90 228" /></g>
-    <g class="d edge" data-id="e-api-s2"><path d="M180 198 C180 215 240 212 240 228" /></g>
-    <g class="d edge" data-id="e-int-s2"><path d="M340 198 C340 215 280 212 280 228" /></g>
-    <g class="d edge" data-id="e-int-s3"><path d="M400 198 C400 215 430 212 430 228" /></g>
-    <g class="d edge" data-id="e-s1-inf"><path d="M90 266 V290" /></g>
-    <g class="d edge" data-id="e-s2-inf"><path d="M260 266 V290" /></g>
-    <g class="d edge" data-id="e-s3-inf"><path d="M430 266 V290" /></g>
-
-    <g class="d hit" data-id="problem" data-links={nodes.problem.links} data-cap={nodes.problem.cap} role="button" aria-label="顧客の課題">
-      <rect class="node why" x="150" y="30" width="220" height="36" rx="18" />
-      <text x="260" y="52" text-anchor="middle" class="t">顧客の課題 <tspan class="sm">· 誰を、どんな状態に</tspan></text>
-    </g>
-    <g class="d hit" data-id="roadmap" data-links={nodes.roadmap.links} data-cap={nodes.roadmap.cap} role="button" aria-label="ロードマップ">
-      <rect class="node" x="160" y="88" width="200" height="38" rx="2" />
-      <text x="260" y="111" text-anchor="middle" class="t">ロードマップ <tspan class="sm">· roadmap</tspan></text>
-    </g>
-    <g class="d hit" data-id="api" data-links={nodes.api.links} data-cap={nodes.api.cap} role="button" aria-label="公開API">
-      <rect class="node" x="80" y="160" width="140" height="38" rx="2" />
-      <text x="150" y="183" text-anchor="middle" class="t">公開API</text>
-    </g>
-    <g class="d hit" data-id="integ" data-links={nodes.integ.links} data-cap={nodes.integ.cap} role="button" aria-label="外部連携">
-      <rect class="node" x="300" y="160" width="140" height="38" rx="2" />
-      <text x="370" y="183" text-anchor="middle" class="t">外部連携</text>
-    </g>
-    <g class="d hit" data-id="s1" data-links={nodes.s1.links} data-cap={nodes.s1.cap} role="button" aria-label="通話サービス">
-      <rect class="node" x="40" y="228" width="100" height="38" rx="2" />
-      <text x="90" y="251" text-anchor="middle" class="t sm">通話 svc</text>
-    </g>
-    <g class="d hit" data-id="s2" data-links={nodes.s2.links} data-cap={nodes.s2.cap} role="button" aria-label="連絡先サービス">
-      <rect class="node" x="210" y="228" width="100" height="38" rx="2" />
-      <text x="260" y="251" text-anchor="middle" class="t sm">連絡先 svc</text>
-    </g>
-    <g class="d hit" data-id="s3" data-links={nodes.s3.links} data-cap={nodes.s3.cap} role="button" aria-label="通知サービス">
-      <rect class="node" x="380" y="228" width="100" height="38" rx="2" />
-      <text x="430" y="251" text-anchor="middle" class="t sm">通知 svc</text>
-    </g>
-    <g class="d hit" data-id="infra" data-links={nodes.infra.links} data-cap={nodes.infra.cap} role="button" aria-label="基盤">
-      <rect class="node how" x="40" y="290" width="440" height="32" rx="2" />
-      <text x="260" y="310" text-anchor="middle" class="t sm">Amazon EKS · Terraform · AWS</text>
-    </g>
+    {edges.map((e) => <g class="d edge" data-id={e.id}><path d={e.d} /></g>)}
+    {pills.map((p) => (
+      <g class="d hit" data-id={p.id} data-links={links(p.col)} data-cap={p.cap} role="button" aria-label={p.label}>
+        <rect class={`node ${p.id.includes('-core-') ? 'core' : p.id.includes('-why') ? 'why' : p.id.includes('-how') ? 'how' : ''}`} x={p.x} y={p.y} width={p.w} height={p.h} rx={p.h / 2 > 12 ? 2 : p.h / 2} />
+        <text x={p.x + p.w / 2} y={p.y + p.h / 2 + 4} text-anchor="middle" class={`t ${p.xs ? 'xs' : ''}`}>{p.label}</text>
+      </g>
+    ))}
   </svg>
+  <dl class="stack" aria-label="技術要素">
+    {stack.map((s) => <div><dt>{s.k}</dt><dd>{s.v}</dd></div>)}
+  </dl>
   <figcaption>
-    <span class="cap">Why → What → How の一本道。要素に触れると、その変更が波及する範囲だけが残ります。</span>
-    <span class="hint en-text">Hover or tap a box to trace what one change touches. Layers follow the Core / Why / What / How model in <i>プロダクトマネジメントのすべて</i> (Oikawa, Sonehara &amp; Koshiro, 2021); Core is left out of the figure.</span>
+    <span class="cap">Core → Why → What → How の4階層を、本業と副業の2軸で。要素に触れると、その軸だけが残ります。</span>
+    <span class="hint en-text">Hover or tap a box to isolate one axis. Layers follow the Core / Why / What / How model in <i>プロダクトマネジメントのすべて</i> (Oikawa, Sonehara &amp; Koshiro, 2021).</span>
   </figcaption>
 </figure>
 
 <style>
   .axis { stroke: var(--rule); stroke-width: 1; }
-  .core { opacity: .55; }
+  .node.core { fill: var(--ai); stroke: var(--ai); }
+  .node.core + .t { fill: var(--paper); }
   .node.why { stroke-dasharray: 3 3; }
   .node.how { fill: var(--ai-soft); }
+  .t.xs { font-size: 10px; }
   .ifig.hov .on .node.why { stroke-dasharray: none; }
+  .stack { margin: 14px 0 0; display: grid; gap: 4px; border-top: 1px solid var(--rule); padding-top: 10px; }
+  .stack div { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; font-size: 11.5px; line-height: 1.6; }
+  .stack dt { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); padding-top: 2px; }
+  .stack dd { margin: 0; color: var(--ink-2); }
+  @media (max-width: 480px) { .stack div { grid-template-columns: 1fr; gap: 0; } }
 </style>

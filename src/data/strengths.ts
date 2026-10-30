@@ -6,9 +6,9 @@ export const strengths = [
     title: 'How を知っているから、Why を深く問える',
     titleEn: 'Technical depth that sharpens the Why',
     body:
-      'エンジニアとして基盤刷新をリードし、公開APIを技術選定から海外チームと進めてきました。実装コストと技術的制約を自分で見積もれるので、ロードマップの優先順位を根拠を持って決め、エンジニアと同じ言葉で議論できます。',
+      'エンジニアとして基盤刷新をリードし、公開APIを技術選定から海外チームと進めてきました。技術的なバックグラウンドがあるので、ロードマップの優先順位を根拠を持って決め、エンジニアと同じ言葉で議論できます。',
     bodyEn:
-      'I led a platform re-architecture and shipped a public API from tech selection onward. Because I can estimate cost and constraints myself, roadmap priorities rest on evidence, not guesses.',
+      'I led a platform re-architecture and shipped a public API from tech selection onward. With an engineering background behind me, roadmap priorities rest on evidence, not guesses, and I can argue them in the language engineers use.',
   },
   {
     glyph: '数',
