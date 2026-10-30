@@ -58,8 +58,8 @@ export const career: CareerEntry[] = [
     date: '2023.08 — 2025.06',
     org: '株式会社RevComm',
     orgEn: 'RevComm Inc.',
-    title: 'バックエンドエンジニア / プロジェクトリーダー',
-    titleEn: 'Backend Engineer / Project Lead',
+    title: 'ソフトウェアエンジニア / プロジェクトリーダー',
+    titleEn: 'Software Engineer / Project Lead',
     type: 'major',
     bullets: [
       '基盤刷新プロジェクトのリーダーとして移行計画・ロードマップ・API 設計・他チーム調整を主導',
@@ -92,8 +92,8 @@ export const career: CareerEntry[] = [
     date: '2021.04 — 2023.06',
     org: 'ヤフー株式会社（現 LINEヤフー）',
     orgEn: 'Yahoo Japan (now LY Corporation)',
-    title: 'ソフトウェアエンジニア（新卒）',
-    titleEn: 'Software Engineer (new grad)',
+    title: 'バックエンドエンジニア',
+    titleEn: 'Backend Engineer',
     type: 'major',
     bullets: [
       '広告メール配信システムの開発・運用。15 年以上稼働するレガシーコードの保守とモダンアーキテクチャへのリプレース',
