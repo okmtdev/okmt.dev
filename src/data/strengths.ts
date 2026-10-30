@@ -16,9 +16,9 @@ export const strengths = [
     title: 'データを事業の数字に繋げる',
     titleEn: 'Turning data into business numbers',
     body:
-      'VoC の自動収集、生成AIによる顧客要望の自動分類など、社内ツールを改善し、散らばった声を構造化して意思決定に使える形にしてきました。定量的な数字にして初めて、優先順位は議論できるものになります。',
+      'VoC の自動収集、生成AIによる顧客要望の自動分類など、社内ツールを改善し、散らばった声を構造化して意思決定に使える形にしてきました。',
     bodyEn:
-      'From automated VoC collection to GenAI classification of customer requests, I have improved internal tools and structured scattered signals into something a decision can rest on. Priorities become debatable only once they are quantified.',
+      'From automated VoC collection to GenAI classification of customer requests, I have improved internal tools and structured scattered signals into something a decision can rest on.',
   },
   {
     glyph: '進',
@@ -26,8 +26,8 @@ export const strengths = [
     title: '事実をベースに、合意をとりながら前に進める',
     titleEn: 'Grounded in fact, moving forward on agreement',
     body:
-      '物事を進めるときは、まず事実と解釈を切り分けて整理します。そのうえで、誰に・どの順番で・どう伝えるかまで気を配り、必要な関係者と合意をとりながらプロジェクトを前に進めます。意思決定は、根拠と伝え方がそろって初めて動きます。',
+      '事実と解釈を持って、誰に・どの順番で・どう伝えるかまで気を配り、必要な関係者と合意をとりながらプロジェクトを前に進めます。',
     bodyEn:
-      'I start by separating what we know from what we think it means. Then I pay attention to who hears it, in what order and in what words, and move the project forward by securing agreement from the people who need to be on board.',
+      'With the facts and my reading of them in hand, I pay attention to who hears it, in what order and in what words, and move the project forward by securing agreement from the people who need to be on board.',
   },
 ];
