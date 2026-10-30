@@ -50,7 +50,7 @@ export const career: CareerEntry[] = [
     ],
     summaryEn:
       'Product manager for MiiTel Phone, Phone Analytics and integrations, owning the mid-to-long-term roadmap. Launched MiiTel API (beta) with an overseas engineering team, from requirements to release.',
-    tags: ['Roadmap', 'Public API', 'Integrations', 'GenAI'],
+    tags: ['Roadmap', 'Customer Journey', 'Mentoring'],
   },
   {
     version: 'v2.0.0',
@@ -67,7 +67,7 @@ export const career: CareerEntry[] = [
     ],
     summaryEn:
       'Led the platform re-architecture project end to end. Placed 5th worldwide (3rd in Japan) at the AWS GenAI GameDay in 2024.',
-    tags: ['Python', 'FastAPI', 'AWS', 'EKS', 'Terraform'],
+    tags: ['AWS', 'Python', 'Terraform'],
   },
   {
     version: 'v1.1.0',
@@ -97,8 +97,7 @@ export const career: CareerEntry[] = [
     type: 'major',
     bullets: [
       '広告メール配信システムの開発・運用。15 年以上稼働するレガシーコードの保守とモダンアーキテクチャへのリプレース',
-      'DDD とクリーンアーキテクチャによる Web API 開発。Development Relations を兼務',
-      '社内ハッカソンで最優秀賞を受賞',
+      'Development Relations を兼務。社内ハッカソンで最優秀賞を受賞',
     ],
     summaryEn:
       'Maintained and replaced a 15-year-old email marketing system; built Web APIs with DDD and clean architecture. Won first prize at the in-house hackathon.',
@@ -120,7 +119,7 @@ export const career: CareerEntry[] = [
     ],
     summaryEn:
       'Designed and built a file system for storing large volumes of IoT data at low cost. Published in an IPSJ journal (CDS) and at IEEE PerCom Workshops (PerIoT\'20).',
-    tags: ['Linux', 'FUSE', 'IoT', 'Security', 'Research'],
+    tags: ['Linux', 'IoT', 'Security'],
   },
   {
     version: 'v0.1.0',
