@@ -1,16 +1,18 @@
 /* Layout: 和紙の上に縦書きの一文。横組み本文は余白で支える。
    Color: 生成り / 墨 / 藍。 Type: Shippori Mincho B1 (display) / Zen Kaku Gothic New (body) / DM Mono (labels) */
 :root {
-  --paper: #f3efe6;
-  --paper-2: #ebe6da;
-  --ink: #231f1a;
-  --ink-2: #4a443c;
-  --mute: #7c7468;
-  --rule: #d9d2c3;
-  --ai: #1d3f73;
-  --ai-soft: rgba(29, 63, 115, 0.10);
-  --sakura: #d98fa0;
-  --ok: #2e7d4f;     /* shipped の緑 */
+  /* ダークのみ提供（2026-10-30 決定）。ライトの値は参考として残す:
+     paper #f3efe6 / paper-2 #ebe6da / ink #231f1a / ink-2 #4a443c / mute #7c7468 / rule #d9d2c3 / ai #1d3f73 / ok #2e7d4f */
+  --paper: #1a1917;
+  --paper-2: #211f1c;
+  --ink: #ece7dc;
+  --ink-2: #c9c2b4;
+  --mute: #9a9285;
+  --rule: #36322c;
+  --ai: #8fb0e6;
+  --ai-soft: rgba(143, 176, 230, 0.14);
+  --sakura: #e3a9b6;
+  --ok: #6cc08a;     /* shipped の緑 */
 
   --serif: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
   --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
@@ -19,22 +21,7 @@
   --gutter: max(20px, env(safe-area-inset-left, 0px));
   --gutter-r: max(20px, env(safe-area-inset-right, 0px));
   --measure: 38em;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #1a1917;
-    --paper-2: #211f1c;
-    --ink: #ece7dc;
-    --ink-2: #c9c2b4;
-    --mute: #9a9285;
-    --rule: #36322c;
-    --ai: #8fb0e6;
-    --ai-soft: rgba(143, 176, 230, 0.14);
-    --sakura: #e3a9b6;
-    --ok: #6cc08a;
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }

@@ -23,8 +23,8 @@ export const strengths = [
   {
     glyph: '進',
     fig: 'drive',
-    title: '事実と解釈を分け、合意をとりながら前に進める',
-    titleEn: 'Separate fact from interpretation, then build agreement',
+    title: '事実をベースに、合意をとりながら前に進める',
+    titleEn: 'Grounded in fact, moving forward on agreement',
     body:
       '物事を進めるときは、まず事実と解釈を切り分けて整理します。そのうえで、誰に・どの順番で・どう伝えるかまで気を配り、必要な関係者と合意をとりながらプロジェクトを前に進めます。意思決定は、根拠と伝え方がそろって初めて動きます。',
     bodyEn:
