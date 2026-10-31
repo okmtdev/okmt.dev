@@ -9,6 +9,7 @@ const year = new Date().getFullYear();
       <p class="en-text">{profile.name} / {profile.nameEn}</p>
     </div>
     <ul class="links">
+      <li><a href="/archive">Archive →</a></li>
       {links.map((l) => <li><a href={l.href} target="_blank" rel="me noopener">{l.label}</a></li>)}
     </ul>
     <p class="copy label">© {year} {profile.nameEn}</p>

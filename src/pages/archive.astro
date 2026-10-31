@@ -1,0 +1,28 @@
+---
+/* 案1: 別ページ。手掛けてきたものと研究・論文をここに置く。 */
+import Base from '../layouts/Base.astro';
+import Products from '../components/Products.astro';
+import Research from '../components/Research.astro';
+import Footer from '../components/Footer.astro';
+import { profile } from '../data/profile';
+---
+<Base title={`Archive — ${profile.siteName}`} description="手掛けてきたものと、学生時代の研究・論文の記録。">
+  <header class="container top">
+    <nav aria-label="サイト内"><a class="back" href="/">← {profile.siteName}</a></nav>
+    <h1>Archive</h1>
+    <p class="lede">手掛けてきたものと、学生時代の研究・論文。<span class="en-text">Products shipped, and research from graduate school.</span></p>
+  </header>
+  <main>
+    <Products />
+    <Research />
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .top { padding-block: clamp(32px, 6vw, 64px) clamp(40px, 7vw, 80px); }
+  .back { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-decoration: none; color: var(--ink-2); border-bottom: 1px solid var(--rule); }
+  .back:hover { color: var(--ai); border-color: var(--ai); }
+  h1 { margin: clamp(28px, 5vw, 48px) 0 0; font-family: var(--serif); font-weight: 600; font-size: clamp(32px, 5vw, 48px); letter-spacing: 0.06em; }
+  .lede { margin: 12px 0 0; color: var(--ink-2); display: flex; flex-direction: column; gap: 4px; max-width: var(--measure); }
+</style>

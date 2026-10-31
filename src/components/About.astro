@@ -1,4 +1,5 @@
 ---
+/* 人となり: 基本情報とプライベートを 1 つに。左は表、最後の行が「好きなもの」。右は学生時代の写真と、裏返る犬の写真。 */
 import SectionHead from './SectionHead.astro';
 import { profile } from '../data/profile';
 const rows = [
@@ -8,13 +9,21 @@ const rows = [
   { k: '言語', ke: 'Languages', v: profile.languages, ve: profile.languagesEn },
   { k: '資格', ke: 'Certifications', v: profile.certifications.join(' / ') + ' など', ve: profile.certificationsEn },
 ];
-const dog = profile.dogPhotos[0];
+// 好きなもの。触れると一言が出る
+const likes = [
+  { t: '犬', ja: '妻と犬と暮らしています。犬に服着せるな。', en: 'Living with my wife and our dog. Do not dress the dog.' },
+  { t: 'プレミアリーグ', ja: 'イギリスのスタジアムに足を運び、現地の空気を浴びています。', en: 'I go to the stadiums in England to soak up the atmosphere in person.' },
+  { t: 'ディカプリオの映画', ja: '『Catch Me If You Can』『The Wolf of Wall Street』など。', en: 'Catch Me If You Can, The Wolf of Wall Street, and the rest.' },
+  { t: '食べること・飲むこと', ja: 'おいしいものと、それに合う一杯。', en: 'Good food, and the right drink to go with it.' },
+];
+const talk = { ja: 'その他の話は、ぜひ直接お話ししましょう。', en: 'For the rest, let us talk in person. Reach me through the links below.' };
 const me = profile.portrait;
+const dogs = profile.dogPhotos.slice(0, 2);
 ---
-<section class="section" aria-labelledby="profile">
+<section class="section" aria-labelledby="about">
   <div class="container grid">
     <div>
-      <SectionHead ja="基本情報" en="Profile" id="profile" />
+      <SectionHead ja="人となり" en="About" id="about" />
       <dl class="rows">
         {rows.map((r) => (
           <div class="row">
@@ -31,7 +40,19 @@ const me = profile.portrait;
             <span class="en-text">いずれも共同発明 / Two granted Japanese patents on information processing, as co-inventor.</span>
           </dd>
         </div>
+        <div class="row">
+          <dt><span>好きなもの</span><span class="label">Likes</span></dt>
+          <dd>
+            <div class="likes" id="likes">
+              {likes.map((l) => (
+                <button type="button" class="like" data-ja={l.ja} data-en={l.en}>{l.t}</button>
+              ))}
+            </div>
+            <p class="like-cap" id="like-cap" aria-live="polite"><span class="ja"></span><span class="en-text"></span></p>
+          </dd>
+        </div>
       </dl>
+      <p class="talk">{talk.ja}<span class="en-text">{talk.en}</span></p>
     </div>
     <div class="side">
     {me && (
@@ -55,8 +76,8 @@ const me = profile.portrait;
         <figcaption class="en-text">{me.caption}</figcaption>
       </figure>
     )}
-    {dog && (
-      <figure class="dog dogfig" id="dog-main" tabindex="0" role="button" aria-label="愛犬の写真。触れると飛んでいって、下の写真と入れ替わります" style="--fly-y:140vh;--fly-x:30%;--land-y:90vh;--land-x:20%">
+    {dogs.length === 2 && (
+      <figure class="dog" id="dog" tabindex="0" role="button" aria-label="愛犬の写真。触れると裏返って、もう一枚に変わります">
         <svg width="0" height="0" style="position:absolute" aria-hidden="true">
           <symbol id="paw" viewBox="0 0 32 32">
             <ellipse cx="16" cy="21" rx="7.5" ry="6" fill="currentColor" />
@@ -67,8 +88,12 @@ const me = profile.portrait;
           </symbol>
           <symbol id="spark" viewBox="0 0 16 16"><path d="M8 0 L9.6 6.4 L16 8 L9.6 9.6 L8 16 L6.4 9.6 L0 8 L6.4 6.4 Z" fill="currentColor" /></symbol>
         </svg>
-        <div class="card">
-          <img src={dog.src} alt={dog.alt} width="640" height="800" loading="lazy" />
+        <div class="flip">
+          {dogs.map((d, i) => (
+            <div class={`face ${i ? 'back' : 'front'}`}>
+              <img src={d.src} alt={d.alt} width="640" height="800" loading="lazy" />
+            </div>
+          ))}
         </div>
         <div class="paws" aria-hidden="true">
           {[['6%','-6%','-20deg','0s'],['30%','-12%','15deg','.12s'],['58%','-4%','-8deg','.24s'],['84%','-10%','22deg','.36s'],['-8%','40%','40deg','.3s'],['96%','60%','-35deg','.42s']].map(([l,t,r,d]) => (
@@ -78,7 +103,7 @@ const me = profile.portrait;
             <svg class={`spark ${i % 2 ? 'blue' : ''}`} style={`left:${l};top:${t};--d:${d}`}><use href="#spark" /></svg>
           ))}
         </div>
-        <figcaption class="en-text"><span class="cap-text">{dog.caption}</span></figcaption>
+        <figcaption class="en-text"><span class="cap-text" data-caps={JSON.stringify(dogs.map((d) => d.caption))}>{dogs[0].caption}</span></figcaption>
       </figure>
     )}
     </div>
@@ -94,13 +119,22 @@ const me = profile.portrait;
   dd { margin: 0; display: flex; flex-direction: column; gap: 2px; }
   .patents { display: grid; gap: 4px; font-size: 14px; }
   .mono { font-family: var(--mono); font-size: 12px; color: var(--ai); margin-right: 6px; }
+  /* 好きなもの: タグに触れると下に一言 */
+  .likes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .like {
+    font: inherit; font-size: 13px; letter-spacing: 0.04em; color: var(--ink-2); background: none;
+    border: 1px solid var(--rule); border-radius: 2px; padding: 4px 12px; cursor: pointer; transition: color .2s, border-color .2s, background .2s;
+  }
+  .like:hover, .like:focus-visible, .like.on { color: var(--ai); border-color: var(--ai); background: var(--ai-soft); outline: none; }
+  .like-cap { margin: 8px 0 0; min-height: 2.6em; font-size: 13px; color: var(--ink-2); display: flex; flex-direction: column; gap: 2px; }
+  .like-cap .ja:empty::before { content: "触れると一言。"; color: var(--mute); }
+  .talk { margin-top: 18px; font-size: 14px; color: var(--ai); display: flex; flex-direction: column; gap: 2px; }
   .side { display: grid; gap: 28px; padding-top: 14px; }
   .me { margin: 0; position: relative; cursor: pointer; }
   .me .card { position: relative; border-radius: 2px; }
   .me img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 2px; background: var(--paper-2); }
   .me figcaption { margin-top: 8px; }
   .me:focus-visible { outline: 2px solid var(--ai); outline-offset: 4px; }
-  /* 触れるとビールが出る */
   .me.cheers { z-index: 6; }
   .beers { position: absolute; inset: 0; pointer-events: none; }
   .beer { position: absolute; width: 46px; height: 52px; opacity: 0; transform: rotate(var(--r)) scale(.3); }
@@ -116,15 +150,23 @@ const me = profile.portrait;
     80% { opacity: 1; transform: translateY(-4px) rotate(var(--r)) scale(1); }
     100% { opacity: 0; transform: translateY(-30px) rotate(var(--r)) scale(.9); }
   }
-  @media (prefers-reduced-motion: reduce) { .me.cheers .beer { animation: none; } .me.cheers .beer { opacity: 1; transform: none; } }
-  .dog { margin: 0; position: relative; }
-  .dog .card { position: relative; }
-  .dog img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 2px; background: var(--paper-2); }
-  .dog .card { overflow: hidden; border-radius: 2px; box-shadow: 0 0 0 6px var(--paper), 0 18px 40px -22px rgba(0,0,0,.35); }
-  .dog:focus-visible .card { outline: 2px solid var(--ai); outline-offset: 4px; }
-  .dog img { transition: transform .6s ease; }
-  .dog:hover img { transform: scale(1.04); }
-  .dog figcaption { margin-top: 8px; }
+  /* 犬: 2 枚を表裏にして、回転しながら入れ替わる。自動でも、触れても */
+  .dog { margin: 0; position: relative; cursor: pointer; perspective: 1400px; outline: none; }
+  .dog.playing { z-index: 6; }
+  .flip { position: relative; aspect-ratio: 4 / 5; transform-style: preserve-3d; transition: transform 1.3s cubic-bezier(.2, .85, .2, 1); }
+  .dog.flipped .flip { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 2px; overflow: hidden; background: var(--paper-2); box-shadow: 0 0 0 6px var(--paper), 0 18px 40px -22px rgba(0,0,0,.35); }
+  .face.back { transform: rotateY(180deg); }
+  .face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .dog.pop .flip { animation: dog-pop 1.3s cubic-bezier(.2, .85, .2, 1) both; }
+  @keyframes dog-pop { 0%, 100% { scale: 1; } 50% { scale: .9; } }
+  .dog:focus-visible .face { outline: 2px solid var(--ai); outline-offset: 4px; }
+  .dog figcaption { margin-top: 12px; }
+  @media (prefers-reduced-motion: reduce) {
+    .me.cheers .beer { animation: none; opacity: 1; transform: none; }
+    .flip { transition: none; }
+    .dog.pop .flip { animation: none; }
+  }
   @media (max-width: 760px) {
     .grid { grid-template-columns: 1fr; }
     .row { grid-template-columns: 1fr; gap: 4px; }
@@ -134,6 +176,25 @@ const me = profile.portrait;
 </style>
 
 <script>
+  // 好きなもの: hover / focus / tap で一言を出す
+  const cap = document.getElementById('like-cap');
+  const likes = Array.from(document.querySelectorAll<HTMLButtonElement>('#likes .like'));
+  if (cap && likes.length) {
+    const ja = cap.querySelector('.ja')!, en = cap.querySelector('.en-text')!;
+    const show = (b: HTMLButtonElement | null) => {
+      likes.forEach((x) => x.classList.toggle('on', x === b));
+      ja.textContent = b?.dataset.ja ?? ''; en.textContent = b?.dataset.en ?? '';
+    };
+    let pinned: HTMLButtonElement | null = null;
+    likes.forEach((b) => {
+      b.addEventListener('mouseenter', () => show(b));
+      b.addEventListener('focus', () => show(b));
+      b.addEventListener('mouseleave', () => show(pinned));
+      b.addEventListener('click', () => { pinned = pinned === b ? null : b; show(pinned); });
+    });
+  }
+
+  // 学生時代の写真: 触れるとビール
   const me = document.getElementById('me');
   if (me) {
     let busy = false;
@@ -145,5 +206,28 @@ const me = profile.portrait;
     me.addEventListener('mouseenter', cheers);
     me.addEventListener('click', cheers);
     me.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cheers(); } });
+  }
+
+  // 犬: 7 秒ごとに自動で裏返る。触れたらその場で裏返り、タイマーを仕切り直す
+  const dog = document.getElementById('dog');
+  if (dog) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const capEl = dog.querySelector<HTMLElement>('.cap-text')!;
+    const caps: string[] = JSON.parse(capEl.dataset.caps ?? '[]');
+    let side = 0, visible = false, timer = 0, busy = false;
+    const flip = (manual: boolean) => {
+      if (busy) return; busy = true;
+      side = 1 - side;
+      dog.classList.toggle('flipped', side === 1);
+      if (manual && !reduce) { dog.classList.remove('pop', 'playing'); void dog.offsetWidth; dog.classList.add('pop', 'playing'); }
+      setTimeout(() => { capEl.textContent = caps[side] ?? ''; }, reduce ? 0 : 600);
+      setTimeout(() => { dog.classList.remove('pop', 'playing'); busy = false; }, reduce ? 50 : 1300);
+      schedule();
+    };
+    const schedule = () => { clearTimeout(timer); if (visible && !reduce) timer = window.setTimeout(() => flip(false), 7000); };
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; schedule(); }, { threshold: 0.4 }).observe(dog);
+    dog.addEventListener('mouseenter', () => flip(true));
+    dog.addEventListener('click', () => flip(true));
+    dog.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(true); } });
   }
 </script>

@@ -16,6 +16,8 @@ export type CareerEntry = {
   tags?: string[];
   /** 背景に薄く置くヒーローの図。view と flavor は src/scripts/fig.ts 参照 */
   fig?: { view: 'mail' | 'biz' | 'wave' | 'fs'; flavor?: 'dev' | 'pm' };
+  /** エントリ末尾の小さな導線（案1: /archive へ） */
+  more?: { href: string; label: string; labelEn: string };
 };
 
 export const career: CareerEntry[] = [
@@ -51,6 +53,7 @@ export const career: CareerEntry[] = [
     summaryEn:
       'Product manager for MiiTel Phone, Phone Analytics and integrations, owning the mid-to-long-term roadmap. Launched MiiTel API (beta) with an overseas engineering team, from requirements to release.',
     tags: ['Roadmap', 'Customer Journey', 'Mentoring'],
+    more: { href: '/archive#products', label: '手掛けたもの', labelEn: 'Shipped' },
   },
   {
     version: 'v2.0.0',
@@ -68,6 +71,7 @@ export const career: CareerEntry[] = [
     summaryEn:
       'Led the platform re-architecture project end to end. Placed 5th worldwide (3rd in Japan) at the AWS GenAI GameDay in 2024.',
     tags: ['AWS', 'Python', 'Terraform'],
+    more: { href: '/archive#products', label: '手掛けたもの', labelEn: 'Shipped' },
   },
   {
     version: 'v1.1.0',
@@ -120,6 +124,7 @@ export const career: CareerEntry[] = [
     summaryEn:
       'Designed and built a file system for storing large volumes of IoT data at low cost. Published in an IPSJ journal (CDS) and at IEEE PerCom Workshops (PerIoT\'20).',
     tags: ['Linux', 'IoT', 'Security'],
+    more: { href: '/archive#research', label: '論文', labelEn: 'Research' },
   },
   {
     version: 'v0.1.0',

@@ -32,6 +32,7 @@ const extra = career.filter((_, i) => isExtra(i)).length;
             {c.tags && c.tags.length > 0 && (
               <div class="tags">{c.tags.map((t) => <span class="tag">{t}</span>)}</div>
             )}
+            {c.more && <a class="more" href={c.more.href}>{c.more.label} <span class="en-text">{c.more.labelEn}</span> →</a>}
           </div>
         </li>
       ))}
@@ -112,6 +113,9 @@ const extra = career.filter((_, i) => isExtra(i)).length;
   .blink:hover { border-bottom-color: var(--ai); }
   .summary { margin-top: 10px; max-width: 60ch; }
   .tags { margin-top: 14px; }
+  .more { display: inline-flex; gap: 6px; align-items: baseline; margin-top: 14px; font-size: 13px; color: var(--ai); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .more:hover { border-color: var(--ai); }
+  .more .en-text { color: var(--ai); opacity: .75; }
   .patch { padding-block: 18px; }
   .patch h3 { font-size: 17px; }
   @media (max-width: 640px) {

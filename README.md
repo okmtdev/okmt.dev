@@ -14,14 +14,15 @@ npm run build    # static output in dist/
 
 | Content | File |
 | --- | --- |
-| Profile, catch copy, links, dog photos | `src/data/profile.ts` |
+| Profile, catch copy, links, photos | `src/data/profile.ts` |
 | Career changelog | `src/data/career.ts` |
 | Strengths copy | `src/data/strengths.ts` |
 | Strength figures (hover captions in `cap`) | `src/components/FigTech.astro`, `FigData.astro`, `FigDrive.astro` |
 | Hero and career background figures | `src/scripts/fig.ts` |
 | Research figure | `src/scripts/fsfig.ts` |
 | Publications | `src/data/publications.ts` |
-| Private section | `src/components/OffClock.astro` |
+| About section (facts, likes, photos) | `src/components/About.astro` |
+| Archive page (products + research) | `src/pages/archive.astro`, `src/components/Appendix.astro` |
 | Products | `src/content/products/*.md` |
 | Theme tokens | `src/styles/global.css` (dark only) |
 
