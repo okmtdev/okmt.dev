@@ -22,7 +22,7 @@ npm run build    # static output in dist/
 | Research figure | `src/scripts/fsfig.ts` |
 | Publications | `src/data/publications.ts` |
 | About section (facts, likes, photos) | `src/components/About.astro` |
-| Archive page (products + research) | `src/pages/archive.astro`, `src/components/Appendix.astro` |
+| Archive page (products + research) | `src/pages/archive.astro` |
 | Products | `src/content/products/*.md` |
 | Theme tokens | `src/styles/global.css` (dark only) |
 
