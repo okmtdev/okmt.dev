@@ -100,7 +100,7 @@ export const career: CareerEntry[] = [
       'Development Relations を兼務。社内ハッカソンで Yahoo 賞を受賞',
     ],
     summaryEn:
-      'Maintained and replaced a 15-year-old email marketing system; built Web APIs with DDD and clean architecture. Won the Yahoo Award at the in-house hackathon.',
+      'Maintained and replaced a 15-year-old email marketing system. Won the Yahoo Award at the in-house hackathon.',
     tags: ['Java', 'DDD', 'Clean Architecture'],
   },
   {
