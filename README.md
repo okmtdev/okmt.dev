@@ -56,3 +56,7 @@ featured: false
 Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site and publishes it to GitHub Pages.
 
 DNS for `okmt.dev` is managed in Cloudflare (DNS only, no proxy): four A records to the GitHub Pages IPs on the apex, and a `www` CNAME to `okmtdev.github.io`. `public/CNAME` must stay `okmt.dev`.
+
+## Analytics
+
+Cloudflare Web Analytics (cookie-free) via the beacon script in `src/layouts/Base.astro`, included only in production builds. View the numbers under Analytics & Logs → Web Analytics in the Cloudflare dashboard.

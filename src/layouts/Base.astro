@@ -54,6 +54,10 @@ const jsonLd = {
       href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap"
     />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <!-- Cloudflare Web Analytics（Cookie なし）。本番ドメインでのみ有効 -->
+    {import.meta.env.PROD && (
+      <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d1d6596816b24ce59443ee2820633da5"}'></script>
+    )}
   </head>
   <body>
     <slot />
