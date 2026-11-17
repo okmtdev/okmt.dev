@@ -9,7 +9,7 @@ summary: "写真を撮って AI の相棒「優勝トマト」に聞くだけ。
 summaryEn: "Snap a photo and ask your AI sidekick, \"Champion Tomato\". Each question becomes a page in your growing diary. Reads seed packets, makes a harvest card, and never nags you with reminders."
 status: shipped
 tags: [Side project, GenAI, Web]
-link: https://saien.okmtdev.com/
-linkLabel: saien.okmtdev.com
+link: https://saien.okmt.dev/
+linkLabel: saien.okmt.dev
 order: 20
 ---
