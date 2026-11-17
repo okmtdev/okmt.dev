@@ -9,8 +9,8 @@ summary: "安全安心な監視カメラで、防犯・見守り・生活改善�
 summaryEn: "Home cameras for security, watching over family and improving daily life. Come home to a summary of what happened in the house today."
 status: shipped
 tags: [Side project, IoT, Camera, Web]
-link: https://smileap.okmtdev.com/
-linkLabel: smileap.okmtdev.com
+link: https://smileap.okmt.dev/
+linkLabel: smileap.okmt.dev
 featured: true
 order: 26
 ---
